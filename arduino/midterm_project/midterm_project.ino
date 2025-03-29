@@ -97,15 +97,25 @@ char BT_get(){
     return '0';
 }
 
+int cnt = 1, id = 1;
 void loop(){
 
     checkMFRC();
-    char u = BT_get();
-    switch(u){
+    // char u = BT_get();
+    //Serial.print(u);
+    int flg = true;
+    String s = "frfr";
+    if(flg){
+        id++;
+    }
+    else goto t1;
+    switch(s[id]){
         case 'l':
+            // Serial.println("case l");
             L_Turn(), state = 1;
             break;
         case 'r':
+            // Serial.println("case r");
             R_Turn(), state = 1;
             break;
         case 'u':
@@ -113,17 +123,28 @@ void loop(){
             break;
         case 'f':
             state = 1;
+            while(ck() == 5){
+                Writemotor(255, 255);
+            }
             break;
         case 's':
-            while(true)
-                Writemotor(0, 0);
+            // while(true)
+            //     Writemotor(0, 0);
             break;
         default:
+            // Writemotor(0, 0);
+           // Serial.println("unmatched");
             break;
     }
-    if(ck() == 5){
+    flg = false;
+    t1:;
+    if(ck() == 5 && state){
+        Serial.print("sent : ");
+        Serial.println("d");
         BT.println("d");
+        cnt++;
         state = 0;
+        flg = true;
     }
     if(!state) return;
     tracking();

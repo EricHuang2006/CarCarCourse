@@ -51,24 +51,25 @@ void U_Turn(){
     while(digitalRead(IR[2]) != 1){
         Writemotor(125, -125);
     }
+    Writemotor(150, 150);
+    delay(200);
 }
 
 void L_Turn(){
-    while(ck() >= 3){
+    while(ck() == 5){
         Writemotor(150, 150);
     }
-    // Writemotor(150, 150);
-    // delay(700);
     Writemotor(-125, 125);
-    delay(550);
-    Writemotor(150, 150);
     delay(300);
-    // while(digitalRead(IR[2]) != 1){
-    //     Writemotor(-125, 125);
-    // }
+    while(digitalRead(IR[2]) != 1){
+        Writemotor(-125, 125);
+    }
+    Writemotor(150, 150);
+    delay(200);
 }
 
 void R_Turn(){
+    Serial.println("r_turn");
     while(ck() == 5){
         Writemotor(150, 150);
     }
@@ -77,4 +78,7 @@ void R_Turn(){
     while(digitalRead(IR[2]) != 1){
         Writemotor(125, -125);
     }
+    Writemotor(150, 150);
+    delay(200);
+    Serial.println("r_turn end");
 }

@@ -25,7 +25,7 @@ class BTInterface:
             port = input("PC bluetooth port name: ")
 
     def start(self):
-        print("Don't need to press enter to start.")
+        print("start.")
         #self.bt.serial_write_string("s")
 
     def get_UID(self):
@@ -56,5 +56,5 @@ if __name__ == "__main__":
             print("get :", res)
             print(c)
             test.bt.serial_write_string("s")
-            c += 1
+            break
     test.end_process()

@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 TEAM_NAME = "TEST"
 #SERVER_URL = "http://140.112.175.18:5000/"
 SERVER_URL = "localhost:3000"
-MAZE_FILE = "data/maze5.csv"
+MAZE_FILE = "data/maze2.csv"
 BT_PORT = "COM11"
 
 
@@ -41,7 +41,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
     maze = Maze(maze_file)
     #point = ScoreboardServer(team_name, server_url)
     point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
-    #BT = BTInterface(port=bt_port)
+    BT = BTInterface(port=bt_port)
     # TODO : Initialize necessary variables
 
     if mode == "0":
@@ -54,16 +54,18 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         log.error("Invalid mode")
         sys.exit(1)
     
-    a, b, dir = list(map(int, input("Enter s, t, dir :").split()))
+    #a, b, dir = list(map(int, input("Enter s, t, dir :").split()))
+    a, b, dir = 4, 6, 4
+    a = a * 2 - 1
     u, seq, dir = maze.BFS(a, dir, b)
+    
     #u, seq, dir = maze.BFS(4, 4, 3)
-    seq.insert(0, 'f')
+    #seq.insert(0, 'f')
     print("seq :", seq)
     s = ""
     for i in seq:
         s += i
     print(s)
-    return
     for i in seq:
         print("sent :", i)
         BT.bt.serial_write_string(i)
@@ -72,14 +74,16 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
             u = BT.get_UID()
             if u:
                 ss = str(u)
-                #print(ss)
+                print(ss)
                 #print("get :", res)
                 if len(ss) == 9:
                     print("get UID :", ss)
                     point.add_UID(ss[:-1])
                     continue
-                else:
+                elif len(ss) == 2:  
+                    print("get :", ss)
                     break
+        time.sleep(0.2)
     BT.bt.serial_write_string("s")
     print("done")
     BT.bt.disconnect()
