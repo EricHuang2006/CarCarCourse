@@ -19,7 +19,7 @@ int extern IR[];
 
 int ck(){
     int c = 0;
-    for(int i = 0; i < 5; i++) c += digitalRead(RF[i]);
+    for(int i = 0; i < 5; i++) c += digitalRead(IR[i]);
     return c;
 }
 
@@ -34,7 +34,7 @@ void Writemotor(double a, double b){
 
 void tracking(){
     double error = 0;
-    for(int i = 0; i < 5; i++) error += (i - 2) * digitalRead(RF[i]);
+    for(int i = 0; i < 5; i++) error += (i - 2) * digitalRead(IR[i]);
     int kp = 100;
     int vr = _Tp - kp * error;
     int vl = _Tp + kp * error;
@@ -48,20 +48,24 @@ void U_Turn(){
     while(ck()){
         Writemotor(150, 150);
     }
-    while(digitalRead(RF[2]) != 1){
+    while(digitalRead(IR[2]) != 1){
         Writemotor(125, -125);
     }
 }
 
 void L_Turn(){
-    while(ck() == 5){
+    while(ck() >= 3){
         Writemotor(150, 150);
     }
+    // Writemotor(150, 150);
+    // delay(700);
     Writemotor(-125, 125);
+    delay(550);
+    Writemotor(150, 150);
     delay(300);
-    while(digitalRead(RF[2]) != 1){
-        Writemotor(-125, 125);
-    }
+    // while(digitalRead(IR[2]) != 1){
+    //     Writemotor(-125, 125);
+    // }
 }
 
 void R_Turn(){
@@ -70,7 +74,7 @@ void R_Turn(){
     }
     Writemotor(125, -125);
     delay(300);
-    while(digitalRead(RF[2]) != 1){
+    while(digitalRead(IR[2]) != 1){
         Writemotor(125, -125);
     }
 }

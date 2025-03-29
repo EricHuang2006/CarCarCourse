@@ -56,3 +56,8 @@ class Bluetooth:
             return uid
         else:
             return 0
+
+#rv = b'\xB5\xC9\x1B\x52'
+#uid = hex(int.from_bytes(rv, byteorder="big", signed=False))
+#print(rv)
+#print(uid)  # Output: '0xb5c91b52'

@@ -19,9 +19,10 @@ class Node:
         # store successor as (Node, direction to node, distance)
         self.adj = []
 
-    def pb(self, successor: int, direction, length=1):
+    def pb(self, successor, direction, length=1):
         self.adj.append((successor, Direction(direction), int(length)))
-        print(f"For Node {self.index}, a successor {self.adj[-1]} is set.")
+        # print(f"{self.index} -> {successor}")
+        # print(f"For Node {self.index}, a successor {self.adj[-1]} is set.")
         return
 
     def get_direction(self, node):

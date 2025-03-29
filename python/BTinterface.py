@@ -29,7 +29,7 @@ class BTInterface:
         #self.bt.serial_write_string("s")
 
     def get_UID(self):
-        return self.bt.serial_read_byte()
+        return self.bt.serial_read_string()
 
     def send_action(self, dirc):
         # TODO : send the action to car
@@ -44,13 +44,17 @@ if __name__ == "__main__":
     test = BTInterface()
     test.start()
     #test.bt.serial_write_string("s")
-    while True:
+    c = 0
+    while c <= 10:
         u = test.get_UID()
         #res = bytes.fromhex(u).decode("utf-8")
         if u:
+            print("u : ", u)
             ss = str(u)
+            print("ss :", ss)
             res = bytearray.fromhex(ss[2:]).decode()
             print("get :", res)
+            print(c)
             test.bt.serial_write_string("s")
-            break
+            c += 1
     test.end_process()

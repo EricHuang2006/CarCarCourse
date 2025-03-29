@@ -4,7 +4,7 @@ import pandas
 from collections import deque
 from enum import IntEnum
 
-filepath = "./python/data/small_maze.csv"
+filepath = "./python/data/maze4.csv"
 class Direction(IntEnum):
     SAME = 0
     NORTH = 1
@@ -22,7 +22,7 @@ class Node:
 
     def pb(self, successor, direction, length=1):
         self.adj.append((successor, Direction(direction), int(length)))
-        print(f"{self.index} -> {successor}")
+        #print(f"{self.index} -> {successor}")
         # print(f"For Node {self.index}, a successor {self.adj[-1]} is set.")
         return
 
@@ -56,7 +56,7 @@ for i in range(len(g)):
             b.pb(g[i][j] * 2, j)
     nodes.append(a), nodes.append(b)    
 mp = {d.index : i for i, d in enumerate(nodes)}
-print(mp)
+# print(mp)
 
 vis = [0] * (n * 2 + 1)
 
@@ -69,7 +69,7 @@ def get(a, b):
         return 'l'
     return 'r'
 
-def BFS(node: int, pdir):
+def BFS(node: int, pdir, t: int = -1):
     dist = [10000] * (n * 2 + 1)
     pre = [(0, 0)] * (n * 2 + 1)
     dist[node] = 0
@@ -89,6 +89,8 @@ def BFS(node: int, pdir):
             tar = i
     if tar == 0:
         return (0, 0, 0)
+    if t != -1:
+        tar = t
     seq = []
     tmp = tar
     while tmp != node:
@@ -99,10 +101,8 @@ def BFS(node: int, pdir):
     seq.append(pdir)
     seq.reverse()
     move = []
-    for i in range(1, len(seq)):
+    for i in range(1, len(seq), 1):
         move.append(get(seq[i - 1], seq[i]))
-        if move[-1] != 'f':
-            move.append('f')
     print("seq :", seq)
     print("move :", move)
     # print("next tar : ", tar, int((tar + 1) / 2))
@@ -111,10 +111,32 @@ def BFS(node: int, pdir):
 vis[1], vis[2] = 1, 1
 u, dir = 1, 2
 
+s = ""
+
+# for i in range(1, n + 1):
+#     # print(i)
+#     if len(nodes[mp[i * 2 - 1]].adj) + len(nodes[mp[i * 2]].adj) >= 4:
+#         vis[i * 2 - 1], vis[i * 2] = 1, 1
+
+while  :
+    a, b, dir = list(map(int, input("Enter s, t, dir :").split()))
+    a, b = a * 2 - 1, b * 2 - 1
+    tr, seq, tr2 = BFS(a, dir, b)
+    t = ""
+    for x in seq:
+        t += x
+    print(t)
+
 while True:
     u, seq, dir = BFS(u, dir)
     if not u:
         break
+    for x in seq:
+        s += x
     print("tar : ", int((u + 1) / 2))
     vis[u] = 1
     vis[((u + 1) ^ 1) - 1] = 1
+print(s)
+
+ss = "3\n"
+print(f"len : {len(ss)}")

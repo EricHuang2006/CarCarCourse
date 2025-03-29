@@ -20,6 +20,14 @@ class Action(IntEnum):
     TURN_LEFT = 4
     HALT = 5
 
+def get(a, b):
+    if a == b:
+        return 'f'
+    if abs(a - b) == 1 and a + b != 5:
+        return 'b'
+    if (abs(a - b) == 2 and a < b) or (abs(a - b) != 2 and a > b):
+        return 'l'
+    return 'r'
 
 class Maze:
     def __init__(self, filepath: str):
@@ -32,6 +40,7 @@ class Maze:
         self.g = self.g.values.astype(int)
         self.n = len(self.g)
         self.nodes = []
+        print(self.g)
         self.vis = [0] * (2 * self.n + 1)
         for i in range(self.n):
             a, b = Node(self.g[i][0] * 2 - 1), Node(self.g[i][0] * 2) # a : north-south, b : west-east
@@ -56,31 +65,28 @@ class Maze:
     def get_node_dict(self):
         return self.node_dict
     '''
-    def BFS(self, node: Node, dir, t = -1):
-        dist = [10000] * (n * 2 + 1)
-        pre = [(0, 0)] * (n * 2 + 1)
+    def BFS(self, node: Node, pdir, t = -1): # (start node, direction, target)
+        dist = [10000] * (self.n * 2 + 1)
+        pre = [(0, 0)] * (self.n * 2 + 1)
         dist[node] = 0
         q = deque()
         q.append(node)
         while q:
             x = q[0]
             q.popleft()
-            for (i, dir, d) in self.nodes[mp[x]].adj:
+            for (i, dir, d) in self.nodes[self.mp[x]].adj:
                 if dist[i] > dist[x] + d:
                     dist[i] = dist[x] + d
-                    pre[i] = (i, dir)
+                    pre[i] = (x, dir)
                     q.append(i)
         tar = 0
         for i in range(1, len(dist)):
-            if vis[i] == 0 and dist[i] < dist[tar]:
+            if self.vis[i] == 0 and dist[i] < dist[tar]:
                 tar = i
         if tar == 0:
             return (0, 0, 0)
         if t != -1:
-            if vis[t * 2 - 1] and vis[t * 2]:
-                return (0, 0, 0)
-            tar = t * 2 - 1 + (dist[t * 2 - 1] > dist[t * 2])
-
+            tar = t * 2
         seq = []
         tmp = tar
         while tmp != node:
@@ -90,14 +96,13 @@ class Maze:
         seq = [x for x in seq if x]
         seq.append(pdir)
         seq.reverse()
+        print("raw seq: ", seq)
         move = []
-        for i in range(1, len(seq)):
+        for i in range(1, len(seq), 1):
             move.append(get(seq[i - 1], seq[i]))
-            if move[-1] != 'f':
-                move.append('f')
-        print("seq :", seq)
-        print("move :", move)
-        return (tar, move, seq[-1])   
+
+        self.vis[tar] = 1, self.vis[tar + 3 * (tar % 2) - 2]
+        return (tar / 2, move, seq[-1])   
 
     def BFS_2(self, node_from: Node, node_to: Node):
         # TODO : similar to BFS but with fixed start point and end point
@@ -130,3 +135,8 @@ class Maze:
 
     def strategy_2(self, node_from: Node, node_to: Node):
         return self.BFS_2(node_from, node_to)
+
+if __name__ == "__main__":
+    maze = Maze("data/maze4.csv")
+    seq = maze.BFS(1, 2, 12)
+    print("seq: ", seq)
