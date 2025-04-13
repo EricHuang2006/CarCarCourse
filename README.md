@@ -23,9 +23,11 @@ pip install -r requirements.txt
 ## Miscellaneous
 ### Parameters
 | action |  speed(left, right) | duration(ms) |
-| Right / Left Turn | () |
-| U-Turn | () |
-| Forward | () |
+|:---:|:---:|:---:|
+| Right / Left Turn | (85, 255) | 650 |
+| U-Turn | (255, -255) | 575 |
+| Forward | () | 200 |
 
-焊接：
+### 焊接：
+
 ![alt text](image.png)
