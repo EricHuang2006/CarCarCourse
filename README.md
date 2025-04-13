@@ -21,12 +21,14 @@ pip install -r requirements.txt
 ```
 
 ## Miscellaneous
+### Test Files
+[能動的十字循跡](test/cross_test/cross_test.ino)
 ### Parameters
-| action |  speed(left, right) | duration(ms) |
+| Action |  Speed(left, right) | Duration(ms) |
 |:---:|:---:|:---:|
 | Right / Left Turn | (85, 255) | 650 |
-| U-Turn | (255, -255) | 575 |
-| Forward | () | 200 |
+| U-Turn | (225, -225) | 575 |
+| Forward | (255, 255) | 200 |
 
 ### 焊接：
 

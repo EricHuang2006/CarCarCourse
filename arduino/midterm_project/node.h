@@ -75,6 +75,7 @@ void U_Turn(unsigned long wait_ms = 575){
 void Forward(){
     unsigned long st = millis();
     while(millis() - st < 200 || ck() == 5){
-        tracking();
+        if(ck() == 5) Writemotor(255, 255);
+        else tracking();
     }
 }
