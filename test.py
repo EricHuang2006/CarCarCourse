@@ -4,7 +4,7 @@ import pandas
 from collections import deque
 from enum import IntEnum
 
-filepath = "./python/data/maze4.csv"
+filepath = "./python/data/maze5.csv"
 class Direction(IntEnum):
     SAME = 0
     NORTH = 1
@@ -103,8 +103,8 @@ def BFS(node: int, pdir, t: int = -1):
     move = []
     for i in range(1, len(seq), 1):
         move.append(get(seq[i - 1], seq[i]))
-    print("seq :", seq)
-    print("move :", move)
+    #print("seq :", seq)
+    #print("move :", move)
     # print("next tar : ", tar, int((tar + 1) / 2))
     return (tar, move, seq[-1])
 
@@ -118,14 +118,14 @@ s = ""
 #     if len(nodes[mp[i * 2 - 1]].adj) + len(nodes[mp[i * 2]].adj) >= 4:
 #         vis[i * 2 - 1], vis[i * 2] = 1, 1
 
-while  :
+while True:
     a, b, dir = list(map(int, input("Enter s, t, dir :").split()))
     a, b = a * 2 - 1, b * 2 - 1
     tr, seq, tr2 = BFS(a, dir, b)
     t = ""
     for x in seq:
         t += x
-    print(t)
+    print("Sequence :", t)
 
 while True:
     u, seq, dir = BFS(u, dir)

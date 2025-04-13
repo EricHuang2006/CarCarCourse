@@ -21,7 +21,7 @@ class Node:
 
     def pb(self, successor, direction, length=1):
         self.adj.append((successor, Direction(direction), int(length)))
-        # print(f"{self.index} -> {successor}")
+        # print(f"{self.index} -> {successor}, d : {direction}")
         # print(f"For Node {self.index}, a successor {self.adj[-1]} is set.")
         return
 

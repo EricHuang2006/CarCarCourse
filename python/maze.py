@@ -42,6 +42,7 @@ class Maze:
         self.nodes = []
         print(self.g)
         self.vis = [0] * (2 * self.n + 1)
+
         for i in range(self.n):
             a, b = Node(self.g[i][0] * 2 - 1), Node(self.g[i][0] * 2) # a : north-south, b : west-east
             a.pb(self.g[i][0] * 2, 0), b.pb(self.g[i][0] * 2 - 1, 0)
@@ -54,6 +55,10 @@ class Maze:
                     b.pb(self.g[i][j] * 2, j)
             self.nodes.append(a), self.nodes.append(b)    
         self.mp = {d.index : i for i, d in enumerate(self.nodes)} #{node index : index in list}
+        for i in range(1, 2 * self.n + 1, 2):
+            if len(self.nodes[self.mp[i]].adj) + len(self.nodes[self.mp[i + 1]].adj) >= 4:
+                self.vis[i], self.vis[i + 1] = 1, 1
+        print(self.vis)
         # self.node_dict = dict()  # key: index, value: the correspond node
     '''
     def get_start_point(self):
@@ -65,7 +70,7 @@ class Maze:
     def get_node_dict(self):
         return self.node_dict
     '''
-    def BFS(self, node: Node, pdir, t = -1): # (start node, direction, target)
+    def BFS(self, node: int, pdir, t = -1): # (start node, direction, target)
         dist = [10000] * (self.n * 2 + 1)
         pre = [(0, 0)] * (self.n * 2 + 1)
         dist[node] = 0
@@ -84,25 +89,28 @@ class Maze:
             if self.vis[i] == 0 and dist[i] < dist[tar]:
                 tar = i
         if tar == 0:
-            return (0, 0, 0)
+            return (0, [], 0)
         if t != -1:
-            tar = t * 2
+            tar = t * 2 - (dist[t * 2] > dist[t * 2 - 1])
         seq = []
         tmp = tar
         while tmp != node:
             (i, dir) = pre[tmp]
             seq.append(dir)
             tmp = i
+        # print("bef : ")
+        # print(np.array(seq))
         seq = [x for x in seq if x]
         seq.append(pdir)
         seq.reverse()
-        print("raw seq: ", seq)
+        # print("raw seq: ", np.array(seq))
         move = []
         for i in range(1, len(seq), 1):
             move.append(get(seq[i - 1], seq[i]))
 
-        self.vis[tar] = 1, self.vis[tar + 3 * (tar % 2) - 2]
-        return (tar / 2, move, seq[-1])   
+        self.vis[tar], self.vis[tar + 2 * (tar % 2) - 1] = 1, 1
+        return (tar, move, seq[-1])   
+        # return (target, move sequence, end direction)
 
     def BFS_2(self, node_from: Node, node_to: Node):
         # TODO : similar to BFS but with fixed start point and end point

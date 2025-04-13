@@ -43,42 +43,38 @@ void tracking(){
     Writemotor(vl, vr);
 }
 
-void U_Turn(){
-    // temporary, will change
-    while(ck()){
-        Writemotor(150, 150);
+
+void L_Turn(unsigned long wait_ms = 650){
+    unsigned long start_time = millis();
+    while(millis() - start_time < wait_ms){
+        Writemotor(85,255);
     }
-    while(digitalRead(IR[2]) != 1){
-        Writemotor(125, -125);
-    }
-    Writemotor(150, 150);
-    delay(200);
+    Writemotor(255,255);
 }
 
-void L_Turn(){
-    while(ck() == 5){
-        Writemotor(150, 150);
+void R_Turn(unsigned long wait_ms = 650){
+    unsigned long start_time = millis();
+    while(millis() - start_time < wait_ms){
+        Writemotor(255,85);
     }
-    Writemotor(-125, 125);
-    delay(300);
-    while(digitalRead(IR[2]) != 1){
-        Writemotor(-125, 125);
-    }
-    Writemotor(150, 150);
-    delay(200);
+    Writemotor(255,255);
 }
 
-void R_Turn(){
-    Serial.println("r_turn");
+void U_Turn(unsigned long wait_ms = 575){
     while(ck() == 5){
-        Writemotor(150, 150);
+        Writemotor(255, 255);
     }
-    Writemotor(125, -125);
-    delay(300);
-    while(digitalRead(IR[2]) != 1){
-        Writemotor(125, -125);
+    unsigned long start_time = millis();
+    while(millis() - start_time < wait_ms){
+        //Writemotor(175,-175); 700
+        Writemotor(225,-225);
     }
-    Writemotor(150, 150);
-    delay(200);
-    Serial.println("r_turn end");
+    Writemotor(255,255);
+}
+
+void Forward(){
+    unsigned long st = millis();
+    while(millis() - st < 200 || ck() == 5){
+        tracking();
+    }
 }

@@ -19,3 +19,13 @@ pip install -r requirements.txt
 cd python
 pip install -r requirements.txt
 ```
+
+## Miscellaneous
+### Parameters
+| action |  speed(left, right) | duration(ms) |
+| Right / Left Turn | () |
+| U-Turn | () |
+| Forward | () |
+
+焊接：
+![alt text](image.png)

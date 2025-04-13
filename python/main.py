@@ -55,35 +55,33 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         sys.exit(1)
     
     #a, b, dir = list(map(int, input("Enter s, t, dir :").split()))
-    a, b, dir = 4, 6, 4
-    a = a * 2 - 1
-    u, seq, dir = maze.BFS(a, dir, b)
-    
-    #u, seq, dir = maze.BFS(4, 4, 3)
-    #seq.insert(0, 'f')
-    print("seq :", seq)
-    s = ""
-    for i in seq:
-        s += i
-    print(s)
-    for i in seq:
-        print("sent :", i)
-        BT.bt.serial_write_string(i)
-        c = 0
-        while c <= 5:
-            u = BT.get_UID()
-            if u:
-                ss = str(u)
-                print(ss)
-                #print("get :", res)
-                if len(ss) == 9:
-                    print("get UID :", ss)
-                    point.add_UID(ss[:-1])
-                    continue
-                elif len(ss) == 2:  
-                    print("get :", ss)
-                    break
-        time.sleep(0.2)
+    #a = a * 2 - 1
+    a, b, dir = 1, 6, 4
+    while True:
+        u, seq, nwdir = maze.BFS(a, dir)
+        if not u:
+            break
+        print(f"current path : {int((a + 1) / 2)} -> {int((u + 1) / 2)}, {nwdir}")
+        print(f"sequence : {seq}")
+        for i in seq:
+            print(f"send : {i}")
+            BT.bt.serial_write_string(i)
+            receive = "ss"
+            while True:
+                receive = BT.get_UID()
+                if receive:
+                    s = str(receive)
+                    print(f"received : {s}")
+                    if len(s) == 9:
+                        print(f"get UID : {s}")
+                        point.add_UID(s[:-1]) # last character is '\n'
+                        continue
+                    elif len(s) == 2:
+                        print(f"get command : {s}")
+                        break
+                
+        a, dir = u, nwdir
+
     BT.bt.serial_write_string("s")
     print("done")
     BT.bt.disconnect()

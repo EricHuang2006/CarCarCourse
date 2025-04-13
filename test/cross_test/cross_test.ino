@@ -5,7 +5,7 @@ int RF[] = {30, 32, 34, 36, 38};
 #include <SoftwareSerial.h>
 #include <MFRC522.h>
 #include <SPI.h>
-SoftwareSerial BT(10, 11);
+SoftwareSerial BT(10, 11); 
 #define RST_PIN 9                // 讀卡機的重置腳位
 #define SS_PIN 53               // 晶片選擇腳位
 MFRC522 mfrc522(SS_PIN, RST_PIN);
@@ -34,12 +34,40 @@ void Writemotor(double a, double b){
 void tracking(){
     double error = 0;
     for(int i = 0; i < 5; i++) error += (i - 2) * digitalRead(RF[i]);
-    int kp = 100, tp = 150;
-    int vr = tp - kp * error;
-    int vl = tp + kp * error;
+    int kp = 100, tp = 255;
+    int vr = tp - kp * error ;
+    int vl = tp + kp * error ;
     vl = min(vl, 255), vr = min(vr, 255);
     vl = max(vl, -255), vr = max(vr, -255);
     Writemotor(vl, vr);
+}
+
+void TurnLeft(unsigned long wait_ms){
+  unsigned long start_time = millis();
+  while(millis()-start_time < wait_ms){
+    Writemotor(85,255);
+  }
+  Writemotor(255,255);
+}
+
+void TurnRight(unsigned long wait_ms){
+  unsigned long start_time = millis();
+  while(millis()-start_time < wait_ms){
+    Writemotor(255,85);
+  }
+  Writemotor(255,255);
+}
+
+void UTurn(unsigned long wait_ms){
+  while(ck() == 5){
+    Writemotor(255, 255);
+  }
+  unsigned long start_time = millis();
+  while(millis()-start_time < wait_ms){
+    //Writemotor(175,-175); 700
+    Writemotor(225,-225);
+  }
+  Writemotor(255,255);
 }
 
 int ck(){
@@ -92,55 +120,34 @@ void loop() {
     checkMFRC();
     BT_get();
     tracking();
-    return;
     if(ck() == 5){
         if(state == 0){ // 起點 -> 1，之後右轉
-            while(ck() == 5){
-                Writemotor(150, 150);
-            }
-            Writemotor(125, -125);
-            delay(300);
-            while(digitalRead(RF[2]) != 1){
-                Writemotor(125, -125);
-            }
+          TurnRight(650);
         }
         else if (state == 1){ // 1 -> 2，之後迴轉
-            while(ck()){
-                Writemotor(150, 150);
-            }
-            while(digitalRead(RF[2]) != 1){
-                Writemotor(125, -125);
-            }
+          UTurn(575);
         }
         else if(state == 2){ // 2 -> 1，之後直走
             while(ck() == 5){
-                Writemotor(150, 150);
+                Writemotor(255, 255);
             }
         }
         else if(state == 3){ // 1 -> 4，之後迴轉
-            while(ck()){
-                Writemotor(150, 150);
-            }
-            while(digitalRead(RF[2]) != 1){
-                Writemotor(125, -125);
-            }
+          UTurn(575);
         }
         else if(state == 4){ // 4 -> 1，之後左轉
-            while(ck() == 5){
-                Writemotor(150, 150);
-            }
-            Writemotor(-125, 125);
-            delay(300);
-            while(digitalRead(RF[2]) != 1){
-                Writemotor(-125, 125);
-            }
+          TurnLeft(650);
         }
         else{ // 1 -> 3，之後停止
             while(ck()){
-                Writemotor(150, 150);
+                Writemotor(255, 255);
             }
         }
         state++;
     }
     tracking();
+    if(state > 5){
+      Writemotor(0,0);
+      return;
+    }
 }

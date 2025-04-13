@@ -37,7 +37,6 @@ void setup() {
         pinMode(IR[i], INPUT);
 
 #ifdef DEBUG
-    Serial.println("Start!");
 #endif
 }
 /*============setup============*/
@@ -81,72 +80,58 @@ bool checkMFRC(){
 char BT_get(){
     if(BT.available()){
         char c = BT.read();
+        // Serial.print("get : ");
         Serial.print("get : ");
         Serial.println(c);
-        if(c == 's'){
-            Serial.print("same!\n");
-            long long a = 0;
-            while(a < 100000 && false){
-                Writemotor(0, 0);
-                a++;
-            }
-            Serial.print("OK!\n");
-        }
+        // if(c == 's'){
+        //     Serial.print("same!\n");
+        //     long long a = 0;
+        //     while(a < 100000 && false){
+        //         Writemotor(0, 0);
+        //         a++;
+        //     }
+        //     Serial.print("OK!\n");
+        // }
         return c;
     }
-    return '0';
+    return 'z';
 }
 
-int cnt = 1, id = 1;
-void loop(){
+int cnt = 1, id = 1, ini = 0;
+char c = 'z';
 
+void loop(){
     checkMFRC();
-    // char u = BT_get();
-    //Serial.print(u);
-    int flg = true;
-    String s = "frfr";
-    if(flg){
-        id++;
+    if(!ini){
+        while(c == 'z') c = BT_get();
+        BT.println("s");
     }
-    else goto t1;
-    switch(s[id]){
-        case 'l':
-            // Serial.println("case l");
-            L_Turn(), state = 1;
-            break;
-        case 'r':
-            // Serial.println("case r");
-            R_Turn(), state = 1;
-            break;
-        case 'u':
-            U_Turn(), state = 1;
-            break;
-        case 'f':
-            state = 1;
-            while(ck() == 5){
-                Writemotor(255, 255);
-            }
-            break;
-        case 's':
-            // while(true)
-            //     Writemotor(0, 0);
-            break;
-        default:
-            // Writemotor(0, 0);
-           // Serial.println("unmatched");
-            break;
+    if(ck() == 5 || !ini){
+        switch(c){
+            case 'l':
+                L_Turn();
+                break;
+            case 'r':
+                R_Turn();
+                break;
+            case 'b':
+                U_Turn();
+                break;
+            case 'f':
+                Forward();
+                break;
+            case 's':
+                while(true){
+                    Writemotor(0, 0);
+                }
+                break;
+            default:
+                break;
+        }
+        c = BT_get();
+        BT.println("s");
+        ini = 1;
     }
-    flg = false;
-    t1:;
-    if(ck() == 5 && state){
-        Serial.print("sent : ");
-        Serial.println("d");
-        BT.println("d");
-        cnt++;
-        state = 0;
-        flg = true;
-    }
-    if(!state) return;
     tracking();
 }
 
