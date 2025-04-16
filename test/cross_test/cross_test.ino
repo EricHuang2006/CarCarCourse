@@ -59,7 +59,7 @@ void Writemotor(double a, double b){
 
 // double arr[] = {-1.8, -1, 0, 1, 1.8};
 // double arr[] = {-3, -1, 0, 1, 3};
-double arr[] = {-60, -20, 0, 20, 60};
+double arr[] = {-40, -20, 0, 20, 40};
 
 void tracking(bool flag = false){ // PID Control
   static double kd = 0, lastError = 0, ki = 0, sumError = 0;
@@ -85,6 +85,18 @@ void tracking(bool flag = false){ // PID Control
   Writemotor(vl, vr);
 }
 
+double slow_arr[] = {-20, -10, 0, 10, 20};
+void slow_tracking(){
+  double powerCorrection = 0;
+  for(int i = 0; i < 5; i++) powerCorrection += arr[i] * digitalRead(RF[i]);
+  int tp = 80;
+  int vr = (tp - powerCorrection);
+  int vl = 0.95 * (tp + powerCorrection);
+  vl = min(vl, 255), vr = min(vr, 255);
+  vl = max(vl, -255), vr = max(vr, -255);
+  Writemotor(vl, vr);
+}
+
 void stop(double t = 100){
   unsigned long start_time = millis();
   start_time = millis();
@@ -92,57 +104,59 @@ void stop(double t = 100){
     Writemotor(0, 0);
   }
 }
-void TurnLeft(unsigned long wait_ms = 280){
+void TurnLeft(unsigned long wait_ms = 260){
   unsigned long st = millis();
-  while(millis() - st < 90){
+  while(millis() - st < 70){
     Writemotor(40, 45);
   }
   st = millis();
   while(millis() - st < wait_ms){
-    Writemotor(-40, 100);
+    Writemotor(-55, 100);
   }
   while(!digitalRead(RF[0])){
     Writemotor(-30, 50);
   }
-  stop(150);
-  // st = millis();
-  // while(millis() - st < 50){
-  //   Writemotor(100, 0);
-  //   if(digitalRead(RF[2])) tracking();
-  // }
+  stop(200);
+  st = millis();
+  while(millis() - st < 300){
+    slow_tracking();
+  }
 }
 
 
-void TurnRight(unsigned long wait_ms = 280){
+void TurnRight(unsigned long wait_ms = 260){
   unsigned long st = millis();
-  while(millis() - st < 90){
+  while(millis() - st < 70){
     Writemotor(40, 40);
   }
   st = millis();
   while(millis() - st < wait_ms){
-    Writemotor(110, -50);
+    Writemotor(110, -60);
   }
   while(!digitalRead(RF[4])){
     Writemotor(48, -45);
   }
-  stop(150);
-  // st = millis();
-  // while(millis() - st < 50){
-  //   Writemotor(0, 110);
-  //   if(digitalRead(RF[2])) tracking();
-  // }
+  stop(200);
+  st = millis();
+  while(millis() - st < 300){
+    slow_tracking();
+  }
 }
 
 void UTurn(unsigned long wait_ms = 440){
-  unsigned long start_time = millis();
-  start_time = millis();
-  while(millis()-start_time < wait_ms){
+  unsigned long st = millis();
+  st = millis();
+  while(millis()-st < wait_ms){
     Writemotor(80, -200);
   }
   while(!digitalRead(RF[4])){
     Writemotor(28, -70);
   }
   stop(200);
+  st = millis();
+  while(millis() - st < 300){
+    slow_tracking();
+  }
 }
 
 void Forward(){
