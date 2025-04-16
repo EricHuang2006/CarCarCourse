@@ -44,6 +44,7 @@ void setup() {
 /*=====Import header files=====*/
 #include "RFID.h"
 // #include "bluetooth.h"
+// #include "node_slow.h"
 #include "node.h"
 // #include "track.h" functions are in node.h
 /*=====Import header files=====*/
@@ -80,18 +81,8 @@ bool checkMFRC(){
 char BT_get(){
     if(BT.available()){
         char c = BT.read();
-        // Serial.print("get : ");
         Serial.print("get : ");
         Serial.println(c);
-        // if(c == 's'){
-        //     Serial.print("same!\n");
-        //     long long a = 0;
-        //     while(a < 100000 && false){
-        //         Writemotor(0, 0);
-        //         a++;
-        //     }
-        //     Serial.print("OK!\n");
-        // }
         return c;
     }
     return 'z';
@@ -100,22 +91,44 @@ char BT_get(){
 int cnt = 1, id = 1, ini = 0;
 char c = 'z';
 
+void send(String s){
+    for(int i = 0; i < s.length(); i++){
+        byte b = s[i];
+        if(b < 0x10) BT.print("0");
+        BT.print(b, HEX);
+    }
+    BT.println("");
+}
+
 void loop(){
-    checkMFRC();
+    while(true){
+        tracking();
+        mfrc522.PCD_Init();
+        if(checkMFRC()){
+            while(true){
+                Writemotor(0, 0);
+            }
+        }
+    }
+    // if(c == 'b'){
+    //     mfrc522.PCD_Init();
+    //     checkMFRC();
+    // }
     if(!ini){
         while(c == 'z') c = BT_get();
         BT.println("s");
     }
-    if(ck() == 5 || !ini){
+    ini = 1;
+    if(ck() == 5){
         switch(c){
             case 'l':
-                L_Turn();
+                TurnLeft();
                 break;
             case 'r':
-                R_Turn();
+                TurnRight();
                 break;
             case 'b':
-                U_Turn();
+                UTurn();
                 break;
             case 'f':
                 Forward();
@@ -128,9 +141,17 @@ void loop(){
             default:
                 break;
         }
-        c = BT_get();
+        unsigned long st = millis();
+        while(millis() - st < 200){
+            tracking();
+        }
+        c = 'z';
+        while(c == 'z') c = BT_get();
+        char a = char('a' + cnt);
+        cnt++;
+        String str = "get : " + String(c);
+        send(str);
         BT.println("s");
-        ini = 1;
     }
     tracking();
 }

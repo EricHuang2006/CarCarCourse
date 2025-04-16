@@ -109,8 +109,7 @@ class Maze:
             move.append(get(seq[i - 1], seq[i]))
 
         self.vis[tar], self.vis[tar + 2 * (tar % 2) - 1] = 1, 1
-        return (tar, move, seq[-1])   
-        # return (target, move sequence, end direction)
+        return (tar, move, seq[-1])  # return (target, move sequence, end direction)
 
     def BFS_2(self, node_from: Node, node_to: Node):
         # TODO : similar to BFS but with fixed start point and end point
@@ -145,6 +144,7 @@ class Maze:
         return self.BFS_2(node_from, node_to)
 
 if __name__ == "__main__":
-    maze = Maze("data/maze4.csv")
-    seq = maze.BFS(1, 2, 12)
-    print("seq: ", seq)
+    maze = Maze("data/maze6.csv")
+    u, seq, dir = maze.BFS(1, 2, 48)
+    print("seq: ", ''.join(map(str, seq)))
+

@@ -43,6 +43,7 @@ class BTInterface:
 if __name__ == "__main__":
     test = BTInterface()
     test.start()
+    test.bt.serial_write_string("start")
     #test.bt.serial_write_string("s")
     c = 0
     while c <= 10:
@@ -51,10 +52,8 @@ if __name__ == "__main__":
         if u:
             print("u : ", u)
             ss = str(u)
-            print("ss :", ss)
-            res = bytearray.fromhex(ss[2:]).decode()
-            print("get :", res)
+            print("get :", ss)
             print(c)
             test.bt.serial_write_string("s")
-            break
+            c += 1
     test.end_process()

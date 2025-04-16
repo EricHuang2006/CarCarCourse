@@ -16,10 +16,11 @@ fi
 arduino-cli compile --fqbn arduino:avr:mega "$1" || exit 1
 echo "Compilation successful. Uploading..."
 
-port="/dev/ttyACM1"
+port="/dev/ttyACM0"
 if [[ -n $2 ]]; then
     port=$2
 fi
 
 arduino-cli upload -p $port --fqbn arduino:avr:mega "$1"
+
 

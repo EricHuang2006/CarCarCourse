@@ -9,6 +9,7 @@ import pandas
 from BTinterface import BTInterface
 from maze import Action, Maze
 from score import ScoreboardServer, ScoreboardFake
+from server_test import add_score
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -17,12 +18,11 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # TODO : Fill in the following information
-TEAM_NAME = "TEST"
-#SERVER_URL = "http://140.112.175.18:5000/"
-SERVER_URL = "localhost:3000"
+# SERVER_URL = "localhost:3000"
 MAZE_FILE = "data/maze2.csv"
-BT_PORT = "COM11"
-
+TEAM_NAME = "ようこそ。Ave Mujica の世界へ"
+SERVER_URL = "http://140.112.175.18:5000/"
+BT_PORT = "COM11"  # ← 請填你的藍牙埠，例如 "COM11"
 
 def parse_args():
     print("parsing...")
@@ -39,8 +39,8 @@ def parse_args():
 
 def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: str):
     maze = Maze(maze_file)
-    #point = ScoreboardServer(team_name, server_url)
-    point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
+    # point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
+    point = ScoreboardServer(team_name, server_url)
     BT = BTInterface(port=bt_port)
     # TODO : Initialize necessary variables
 
@@ -56,7 +56,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
     
     #a, b, dir = list(map(int, input("Enter s, t, dir :").split()))
     #a = a * 2 - 1
-    a, b, dir = 1, 6, 4
+    a, b, dir = 1, 6, 3
     while True:
         u, seq, nwdir = maze.BFS(a, dir)
         if not u:
@@ -70,14 +70,16 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
             while True:
                 receive = BT.get_UID()
                 if receive:
-                    s = str(receive)
+                    s = str(receive).strip()
                     print(f"received : {s}")
-                    if len(s) == 9:
+                    if len(s) == 8:
+                        add_score(s)
                         print(f"get UID : {s}")
                         point.add_UID(s[:-1]) # last character is '\n'
                         continue
-                    elif len(s) == 2:
+                    elif len(s) == 1:
                         print(f"get command : {s}")
+                        time.sleep(0.5)
                         break
                 
         a, dir = u, nwdir

@@ -6,9 +6,6 @@ usage:
     ./run.sh [file_name]
 EOF
 }
-
-echo -n "Current time : "
-date +"%Y-%m-%d %H:%M:%S"
 if [[ -z $1 ]]; then
     usage
     exit 1
@@ -22,4 +19,5 @@ if [[ -n $2 ]]; then
 fi
 
 arduino-cli upload -p $port --fqbn arduino:avr:mega "$1"
+
 
