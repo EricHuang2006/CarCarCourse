@@ -70,7 +70,7 @@ void tracking(bool flag = false){ // PID Control
   sumError = constrain(sumError, -20, 20); // max speed : [-200, 200]
   double dError = error - lastError; // D
   
-  int kp = 1, tp = 170; // old : 37
+  int kp = 1, tp = 150; // old : 37 // new kp : 170
   // int kp = 22, tp = 90;
   int powerCorrection = kp * error + kd * dError + ki * sumError;
   lastError = error;

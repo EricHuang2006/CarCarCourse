@@ -84,7 +84,7 @@ class ScoreboardServer(Scoreboard):
     The Scoreboard class connects to the server socket and enables updating score by sending UID.
     """
 
-    def __init__(self, teamname: str, host=f"http://localhost:3000", debug=False):
+    def __init__(self, teamname: str, host=f"http://localhost:5000", debug=False):
         self.teamname = teamname
         self.ip = host
 

@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 
 # TODO : Fill in the following information
 # SERVER_URL = "localhost:3000"
-MAZE_FILE = "data/maze2.csv"
+MAZE_FILE = "data/medium_maze.csv"
 TEAM_NAME = "ようこそ。Ave Mujica の世界へ"
 SERVER_URL = "http://140.112.175.18:5000/"
 BT_PORT = "COM11"  # ← 請填你的藍牙埠，例如 "COM11"
@@ -37,11 +37,13 @@ def parse_args():
     return parser.parse_args()
 
 
+
+        
 def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: str):
     maze = Maze(maze_file)
     # point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
-    point = ScoreboardServer(team_name, server_url)
     BT = BTInterface(port=bt_port)
+    #point = ScoreboardServer(team_name, server_url)
     # TODO : Initialize necessary variables
 
     if mode == "0":
@@ -54,9 +56,10 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         log.error("Invalid mode")
         sys.exit(1)
     
-    #a, b, dir = list(map(int, input("Enter s, t, dir :").split()))
-    #a = a * 2 - 1
-    a, b, dir = 1, 6, 3
+    a, b, dir = 1, 6, 1
+    maze.vis[1], maze.vis[2] = 1, 1
+    maze
+    # Strategy 1 : go to the farthest node first, then repeatly do bfs to the nearest unvisited node
     while True:
         u, seq, nwdir = maze.BFS(a, dir)
         if not u:
@@ -67,24 +70,35 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
             print(f"send : {i}")
             BT.bt.serial_write_string(i)
             receive = "ss"
+            continue
             while True:
                 receive = BT.get_UID()
                 if receive:
                     s = str(receive).strip()
-                    print(f"received : {s}")
+                    print(f"[ received : {s} ]")
                     if len(s) == 8:
-                        add_score(s)
                         print(f"get UID : {s}")
-                        point.add_UID(s[:-1]) # last character is '\n'
+                        #add_score(s)
+                        # point.add_UID(s[:-1]) # last character is '\n'
                         continue
                     elif len(s) == 1:
-                        print(f"get command : {s}")
-                        time.sleep(0.5)
+                        # print(f"get command : {s}")
+                        time.sleep(0.25)
                         break
                 
         a, dir = u, nwdir
-
+        
     BT.bt.serial_write_string("s")
+    while True:
+        receive = BT.get_UID()
+        if receive:
+            s = str(receive).strip()
+            print(f"[ received : {s} ]")
+            if len(s) == 8:
+                print(f"get UID : {s}")
+                point.add_UID(s)
+                print(f" current score : {point.get_current_score()}")
+
     print("done")
     BT.bt.disconnect()
 

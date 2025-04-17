@@ -58,6 +58,9 @@ class Maze:
         for i in range(1, 2 * self.n + 1, 2):
             if len(self.nodes[self.mp[i]].adj) + len(self.nodes[self.mp[i + 1]].adj) >= 4:
                 self.vis[i], self.vis[i + 1] = 1, 1
+
+        # for i in range(1, 9):
+        #     self.vis[i * 6 * 2], self.vis[i * 6 * 2 - 1] = 1, 1
         print(self.vis)
         # self.node_dict = dict()  # key: index, value: the correspond node
     '''
@@ -143,8 +146,22 @@ class Maze:
     def strategy_2(self, node_from: Node, node_to: Node):
         return self.BFS_2(node_from, node_to)
 
+def bfs2(a, dir, t):
+    ret = ""
+    while True:
+        u, seq, nwdir = maze.BFS(a, dir, t)
+        t = -1
+        if not u:
+            break
+        print(f"current path : {int((a + 1) / 2)} -> {int((u + 1) / 2)}, {nwdir}")
+        print(f"sequence : {seq}")
+        ret = ret + ''.join(map(str, seq))
+        a, dir = u, nwdir
+    return ret
+
 if __name__ == "__main__":
-    maze = Maze("data/maze6.csv")
-    u, seq, dir = maze.BFS(1, 2, 48)
+    maze = Maze("data/medium_maze.csv")
+    seq = bfs2(1, 1, 12)
+    # u, seq, dir = maze.BFS(47, 1, 43)
     print("seq: ", ''.join(map(str, seq)))
 

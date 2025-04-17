@@ -11,7 +11,7 @@ int extern _Tp;
 int extern PWM[];
 int extern A[];
 int extern B[];
-int extern IR[];
+int extern RF[];
 /*===========================import variable===========================*/
 
 // TODO: add some function to control your car when encounter a node
@@ -19,7 +19,7 @@ int extern IR[];
 
 int ck(){
     int c = 0;
-    for(int i = 0; i < 5; i++) c += digitalRead(IR[i]);
+    for(int i = 0; i < 5; i++) c += digitalRead(RF[i]);
     return c;
 }
 
@@ -32,97 +32,108 @@ void Writemotor(double a, double b){
     digitalWrite(B[1], b <= 0);
 }
 
-double arr[] = {-1.6, -1, 0, 1, 1.6};
-
-void tracking_simple(){
-    double error = 0;
-    for(int i = 0; i < 5; i++) error += (i - 2) * digitalRead(IR[i]);
-    int kp = 100;
-    int vr = _Tp - kp * error;
-    int vl = _Tp + kp * error;
-    vl = min(vl, 255), vr = min(vr, 255);
-    vl = max(vl, -255), vr = max(vr, -255);
-    Writemotor(vl, vr);
-}
+double arr[] = {-40, -20, 0, 20, 40};
 
 void tracking(bool flag = false){ // PID Control
-    static double kd = 0, lastError = 0, ki = 0, sumError = 0;
-    if(flag) lastError = 0, sumError = 0;
-    double error = 0;
-    for(int i = 0; i < 5; i++) error += arr[i] * digitalRead(IR[i]);
-    sumError += error; // I
-    sumError = constrain(sumError, -20, 20); // max speed : [-200, 200]
-    double dError = error - lastError; // D
+  static double kd = 0, lastError = 0, ki = 0, sumError = 0;
+  if(flag) lastError = 0, sumError = 0;
+  double error = 0;
+  for(int i = 0; i < 5; i++) error += arr[i] * digitalRead(RF[i]);
+  sumError += error; // I
+  sumError = constrain(sumError, -20, 20); // max speed : [-200, 200]
+  double dError = error - lastError; // D
+  
+  int kp = 1, tp = 150; // old : 37 // new kp : 170
+  // int kp = 22, tp = 90;
+  int powerCorrection = kp * error + kd * dError + ki * sumError;
+  lastError = error;
+  int vr = (tp - powerCorrection) * (powerCorrection >= 0 ? 1 : 1);
+  int vl = 0.95 * (tp + powerCorrection) * (powerCorrection <= 0 ? 1 : 1);
+  // int vl = 0.95 * (tp + powerCorrection) * (powerCorrection <= 0 ? 1 : 0.75);
+  // int vr = (tp - powerCorrection) * (powerCorrection >= 0 ? 1 : 0.75);
+  // int deduct = digitalRead(RF[0]) | digitalRead(RF[4]);
+  // if(deduct) vl *= 0.85, vr *= 0.85;
+  vl = min(vl, 255), vr = min(vr, 255);
+  vl = max(vl, -255), vr = max(vr, -255);
+  Writemotor(vl, vr);
+}
 
-    int kp = 35, tp = 150;
-    int powerCorrection = kp * error + kd * dError + ki * sumError;
-    lastError = error;
-    int vr = (tp - powerCorrection) * (powerCorrection >= 0 ? 1 : 0.75);
-    int vl = 0.95 * (tp + powerCorrection) * (powerCorrection <= 0 ? 1 : 0.75);
-    int deduct = digitalRead(IR[0]) | digitalRead(IR[4]);
-    if(deduct) vl *= 0.85, vr *= 0.85;
-    vl = min(vl, 255), vr = min(vr, 255);
-    vl = max(vl, -255), vr = max(vr, -255);
-    Writemotor(vl, vr);
+double slow_arr[] = {-20, -10, 0, 10, 20};
+void slow_tracking(){
+  double powerCorrection = 0;
+  for(int i = 0; i < 5; i++) powerCorrection += arr[i] * digitalRead(RF[i]);
+  int tp = 80;
+  int vr = (tp - powerCorrection);
+  int vl = 0.95 * (tp + powerCorrection);
+  vl = min(vl, 255), vr = min(vr, 255);
+  vl = max(vl, -255), vr = max(vr, -255);
+  Writemotor(vl, vr);
 }
 
 void stop(double t = 100){
-    unsigned long start_time = millis();
-    start_time = millis();
-    while(millis() - start_time < t){
-        Writemotor(0, 0);
-    }
+  unsigned long start_time = millis();
+  start_time = millis();
+  while(millis() - start_time < t){
+    Writemotor(0, 0);
+  }
+}
+void TurnLeft(unsigned long wait_ms = 260){
+  unsigned long st = millis();
+  while(millis() - st < 70){
+    Writemotor(40, 45);
+  }
+  st = millis();
+  while(millis() - st < wait_ms){
+    Writemotor(-55, 100);
+  }
+  while(!digitalRead(RF[0])){
+    Writemotor(-30, 50);
+  }
+  stop(200);
+  st = millis();
+  while(millis() - st < 300){
+    slow_tracking();
+  }
 }
 
-void TurnLeft(unsigned long wait_ms = 250){
-    unsigned long start_time = millis();
-    while(millis() - start_time < wait_ms){
-        Writemotor(-125, 130);
-    }
-    while(!digitalRead(IR[0])){
-        Writemotor(-70, 75);
-    }
-    start_time = millis();
-    while(millis() - start_time < 50){
-        Writemotor(100, 0);
-        if(digitalRead(IR[2])) tracking();
-    }
+
+void TurnRight(unsigned long wait_ms = 260){
+  unsigned long st = millis();
+  while(millis() - st < 70){
+    Writemotor(40, 40);
+  }
+  st = millis();
+  while(millis() - st < wait_ms){
+    Writemotor(110, -60);
+  }
+  while(!digitalRead(RF[4])){
+    Writemotor(48, -45);
+  }
+  stop(200);
+  st = millis();
+  while(millis() - st < 300){
+    slow_tracking();
+  }
 }
 
-
-void TurnRight(unsigned long wait_ms = 240){
-    unsigned long start_time = millis();
-    start_time = millis();
-    while(millis() - start_time < wait_ms){
-        Writemotor(145, -180);
-    }
-    while(!digitalRead(IR[4])){
-        Writemotor(55, -70);
-    }
-    start_time = millis();
-    while(millis() - start_time < 50){
-        Writemotor(0, 110);
-        if(digitalRead(IR[2])) tracking();
-    }
-}
-
-void UTurn(unsigned long wait_ms = 400){
-    unsigned long start_time = millis();
-    start_time = millis();
-    while(millis()-start_time < wait_ms){
-        Writemotor(80, -220);
-    }
-    while(!ck()){
-        Writemotor(30, -80);
-    }
-    start_time = millis();
-    stop(100);
+void UTurn(unsigned long wait_ms = 440){
+  unsigned long st = millis();
+  st = millis();
+  while(millis()-st < wait_ms){
+    Writemotor(80, -200);
+  }
+  while(!digitalRead(RF[4])){
+    Writemotor(28, -70);
+  }
+  stop(200);
+  st = millis();
+  while(millis() - st < 300){
+    slow_tracking();
+  }
 }
 
 void Forward(){
-    unsigned long st = millis();
-    while(millis() - st < 200 || ck() == 5){
-        if(ck() == 5) Writemotor(255, 255);
-        else tracking();
-    }
+  while(ck() == 5){
+    Writemotor(130, 138);
+  }
 }

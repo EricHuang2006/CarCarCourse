@@ -12,7 +12,7 @@ TEAM_NAME = "ようこそ。Ave Mujica の世界へ"
 SERVER_URL = "http://140.112.175.18:5000/"
 BT_PORT = "COM11"  # ← 請填你的藍牙埠，例如 "COM11"
 
-def add_score():
+def add_score(ss):
     log.info(f"讀取到 UID：{ss}")
     try:
         score, time_remaining = point.add_UID(ss)

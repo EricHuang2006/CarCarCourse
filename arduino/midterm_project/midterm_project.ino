@@ -18,7 +18,7 @@ SoftwareSerial BT(10, 11);
 int PWM[] = {12, 13}; // A, B
 int A[] = {2, 3};
 int B[] = {5, 6};
-int IR[] = {30, 32, 34, 36, 38};
+int RF[] = {30, 32, 34, 36, 38};
 // RFID, 請按照自己車上的接線寫入腳位
 #define RST_PIN 9                // 讀卡機的重置腳位
 #define SS_PIN 53               // 晶片選擇腳位
@@ -34,7 +34,7 @@ void setup() {
     for(int i = 0; i < 2; i++) 
         pinMode(PWM[i], OUTPUT), pinMode(A[i], OUTPUT), pinMode(B[i], OUTPUT);
     for(int i = 0; i < 5; i++)
-        pinMode(IR[i], INPUT);
+        pinMode(RF[i], INPUT);
 
 #ifdef DEBUG
 #endif
@@ -101,14 +101,10 @@ void send(String s){
 }
 
 void loop(){
-    while(true){
+    if(c == 'b'){
         tracking();
         mfrc522.PCD_Init();
-        if(checkMFRC()){
-            while(true){
-                Writemotor(0, 0);
-            }
-        }
+        checkMFRC();
     }
     // if(c == 'b'){
     //     mfrc522.PCD_Init();
@@ -147,10 +143,10 @@ void loop(){
         }
         c = 'z';
         while(c == 'z') c = BT_get();
-        char a = char('a' + cnt);
-        cnt++;
-        String str = "get : " + String(c);
-        send(str);
+        // char a = char('a' + cnt);
+        // cnt++;
+        // String str = "get : " + String(c);
+        // send(str);
         BT.println("s");
     }
     tracking();
