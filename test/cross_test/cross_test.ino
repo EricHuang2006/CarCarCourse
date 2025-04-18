@@ -88,8 +88,8 @@ void tracking(bool flag = false){ // PID Control
 double slow_arr[] = {-20, -10, 0, 10, 20};
 void slow_tracking(){
   double powerCorrection = 0;
-  for(int i = 0; i < 5; i++) powerCorrection += arr[i] * digitalRead(RF[i]);
-  int tp = 80;
+  for(int i = 0; i < 5; i++) powerCorrection += slow_arr[i] * digitalRead(RF[i]);
+  int tp = 90;
   int vr = (tp - powerCorrection);
   int vl = 0.95 * (tp + powerCorrection);
   vl = min(vl, 255), vr = min(vr, 255);
@@ -97,6 +97,17 @@ void slow_tracking(){
   Writemotor(vl, vr);
 }
 
+double mid_arr[] = {-30, -15, 0, 15, 30};
+void mid_tracking(){
+  double powerCorrection = 0;
+  for(int i = 0; i < 5; i++) powerCorrection += mid_arr[i] * digitalRead(RF[i]);
+  int tp = 120;
+  int vr = (tp - powerCorrection);
+  int vl = 0.95 * (tp + powerCorrection);
+  vl = min(vl, 255), vr = min(vr, 255);
+  vl = max(vl, -255), vr = max(vr, -255);
+  Writemotor(vl, vr);
+}
 void stop(double t = 100){
   unsigned long start_time = millis();
   start_time = millis();
@@ -200,22 +211,28 @@ char BT_get(){
 }
 
 void test1(){
+  if(state == 1){
+    mfrc522.PCD_Init();
+    checkMFRC();
+    mid_tracking();
+  }
+  else tracking();
   if(ck() == 5){
-    if(state == 0){ // 起點 -> 1，之後右轉
-      while(ck() >= 3){
-        Writemotor(153, 160);
-      }
+    if(state == 0){
+      Forward();
     }
     else{
       UTurn();
-      state = -1;
     }
-    state++;
+    state = (state + 1) % 2;
   }
 }
-void loop() {
+
+void loop() {   
     // checkMFRC();
     // BT_get();
+    test1();
+    return;
     tracking();
     if(state == 5){
       mfrc522.PCD_Init();

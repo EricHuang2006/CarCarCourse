@@ -41,7 +41,7 @@ class Bluetooth:
 
     def serial_read_string(self):
         waiting = self.serial.in_waiting
-        if waiting >= 0:
+        if waiting > 0:
             rv = self.serial.readline().decode("utf-8")[:-1]
             self.serial.reset_input_buffer()
             return rv

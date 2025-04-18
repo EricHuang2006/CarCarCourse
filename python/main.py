@@ -71,15 +71,15 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
             BT.bt.serial_write_string(i)
             receive = "ss"
             continue
-            while True:
+            while True:  
                 receive = BT.get_UID()
                 if receive:
                     s = str(receive).strip()
                     print(f"[ received : {s} ]")
                     if len(s) == 8:
                         print(f"get UID : {s}")
-                        #add_score(s)
-                        # point.add_UID(s[:-1]) # last character is '\n'
+                        # add_score(s)
+                        point.add_UID(s[:-1]) # last character is '\n'
                         continue
                     elif len(s) == 1:
                         # print(f"get command : {s}")
@@ -96,8 +96,8 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
             print(f"[ received : {s} ]")
             if len(s) == 8:
                 print(f"get UID : {s}")
-                point.add_UID(s)
-                print(f" current score : {point.get_current_score()}")
+                score, tr = point.add_UID(s)
+                print(f" Current score : {point.get_current_score()}, Time remaining : {tr:.1f}")
 
     print("done")
     BT.bt.disconnect()
