@@ -33,7 +33,8 @@ class Bluetooth:
         self.serial.close()
 
     def serial_write_string(self, data: str):
-        send = data.encode("utf-8")
+        # send = data.encode("utf-8")
+        send = data.encode("ascii")
         self.serial.write(send)
 
     def serial_write_bytes(self, data: bytes):
@@ -42,9 +43,15 @@ class Bluetooth:
     def serial_read_string(self):
         waiting = self.serial.in_waiting
         if waiting > 0:
-            rv = self.serial.readline().decode("utf-8")[:-1]
+            u = self.serial.readline()
+            print(f"raw info : {u}")
+            try:
+                rv = u.decode("utf-8")[:-1]
+                self.serial.reset_input_buffer()
+                return rv
+            except UnicodeDecodeError:
+                print("Decode failed, data was invalid")
             self.serial.reset_input_buffer()
-            return rv
         return ""
 
     def serial_read_byte(self):

@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 
 # TODO : Fill in the following information
 # SERVER_URL = "localhost:3000"
-MAZE_FILE = "data/medium_maze.csv"
+MAZE_FILE = "data/418.csv"
 TEAM_NAME = "ようこそ。Ave Mujica の世界へ"
 SERVER_URL = "http://140.112.175.18:5000/"
 BT_PORT = "COM11"  # ← 請填你的藍牙埠，例如 "COM11"
@@ -43,7 +43,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
     maze = Maze(maze_file)
     # point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
     BT = BTInterface(port=bt_port)
-    #point = ScoreboardServer(team_name, server_url)
+    point = ScoreboardServer(team_name, server_url)
     # TODO : Initialize necessary variables
 
     if mode == "0":
@@ -56,8 +56,8 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         log.error("Invalid mode")
         sys.exit(1)
     
-    a, b, dir = 1, 6, 1
-    maze.vis[1], maze.vis[2] = 1, 1
+    a, b, dir = 5, 6, 1 # a = node_id * 2
+    maze.vis[5], maze.vis[6] = 1, 1
     maze
     # Strategy 1 : go to the farthest node first, then repeatly do bfs to the nearest unvisited node
     while True:
@@ -68,9 +68,11 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         print(f"sequence : {seq}")
         for i in seq:
             print(f"send : {i}")
+            # while(true):
+            #    BT.bt.serial_write_string(i)
             BT.bt.serial_write_string(i)
+            #continue
             receive = "ss"
-            continue
             while True:  
                 receive = BT.get_UID()
                 if receive:
@@ -79,17 +81,32 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                     if len(s) == 8:
                         print(f"get UID : {s}")
                         # add_score(s)
-                        point.add_UID(s[:-1]) # last character is '\n'
+                        point.add_UID(s) # last character is '\n'
                         continue
-                    elif len(s) == 1:
-                        # print(f"get command : {s}")
-                        time.sleep(0.25)
+                    #elif len(s) == 1:
+                    else:
+                        print(f"get command : {s}")
                         break
                 
         a, dir = u, nwdir
         
     BT.bt.serial_write_string("s")
-    while True:
+    while False:  
+        receive = BT.get_UID()
+        if receive:
+            s = str(receive).strip()
+            print(f"[ received : {s} ]")
+            if len(s) == 8:
+                print(f"get UID : {s}")
+                # add_score(s)
+                point.add_UID(s) # last character is '\n'
+                continue
+            #elif len(s) == 1:
+            else:
+                print(f"get command : {s}")
+        time.sleep(0.25)
+        
+    while False:
         receive = BT.get_UID()
         if receive:
             s = str(receive).strip()

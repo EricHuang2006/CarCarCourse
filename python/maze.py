@@ -160,7 +160,7 @@ def bfs2(a, dir, t):
     return ret
 
 if __name__ == "__main__":
-    maze = Maze("data/medium_maze.csv")
+    maze = Maze("data/418.csv")
     seq = bfs2(1, 1, 12)
     # u, seq, dir = maze.BFS(47, 1, 43)
     print("seq: ", ''.join(map(str, seq)))

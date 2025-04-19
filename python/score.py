@@ -55,12 +55,14 @@ class ScoreboardFake(Scoreboard):
         log.debug(f"Adding UID: {UID_str}")
 
         if not isinstance(UID_str, str):
-            raise ValueError(f"UID format error! (expected: str) (got: {UID_str})")
+            log.info(f"UID format error! (expected: str) (got: {UID_str})")
+            #raise ValueError(f"UID format error! (expected: str) (got: {UID_str})")
 
         if not re.match(r"^[0-9A-Fa-f]{8}$", UID_str):
-            raise ValueError(
-                f"UID format error! (expected: 8 hex digits) (got: {UID_str})"
-            )
+            log.info(f"UID format error! (expected: 8 hex digits) (got: {UID_str})")
+            #raise ValueError(
+            #    f"UID format error! (expected: 8 hex digits) (got: {UID_str})"
+            #)
 
         if UID_str not in self.uid_to_score:
             log.info(f"This UID is not in the list: {UID_str}")
@@ -111,12 +113,14 @@ class ScoreboardServer(Scoreboard):
         log.debug(f"Adding UID: {UID_str}")
 
         if not isinstance(UID_str, str):
-            raise ValueError(f"UID format error! (expected: str) (got: {UID_str})")
+            log.info(f"UID format error! (expected: str) (got: {UID_str})")
+            #raise ValueError(f"UID format error! (expected: str) (got: {UID_str})")
 
         if not re.match(r"^[0-9A-Fa-f]{8}$", UID_str):
-            raise ValueError(
-                f"UID format error! (expected: 8 hex digits) (got: {UID_str})"
-            )
+            log.info(f"UID format error! (expected: 8 hex digits) (got: {UID_str})")
+            #raise ValueError(
+            #    f"UID format error! (expected: 8 hex digits) (got: {UID_str})"
+            #)
 
         res = self.socket.call("add_UID", UID_str, namespace="/team")
         if not res:

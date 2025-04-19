@@ -13,8 +13,8 @@
 #include <SPI.h>
 #include <SoftwareSerial.h>
 /*===========================define pin & create module object================================*/
-SoftwareSerial BT(10, 11);
-
+// SoftwareSerial BT(10, 11);
+#define BT Serial1
 int PWM[] = {12, 13}; // A, B
 int A[] = {2, 3};
 int B[] = {5, 6};
@@ -81,8 +81,8 @@ bool checkMFRC(){
 String s = "fflfbfrrlrbllflbfbs";
 int sid = 0;
 char BT_get(){
-    if(sid == s.length()) return 'z';
-    return s[sid++];
+    // if(sid == s.length()) return 'z';
+    // return s[sid++];
     if(BT.available()){
         char c = BT.read();
         Serial.print("get : ");
@@ -92,7 +92,7 @@ char BT_get(){
     return 'z';
 }
 
-int cnt = 1, id = 1, ini = 0;
+int cnt = 0, id = 1, ini = 0;
 char c = 'z';
 
 void send(String s){
@@ -109,14 +109,20 @@ void loop(){
     //     mfrc522.PCD_Init();
     //     checkMFRC();
     // }
-    while(true){
-        mfrc522.PCD_Init();
-        checkMFRC();
-    }
+    // while(true){
+    //     mfrc522.PCD_Init();
+    //     checkMFRC();
+    // }
     if(!ini){
-        while(!BT.available());
         while(c == 'z') c = BT_get();
-        BT.println("s");
+        String u = "car_received...";
+        if (c >= 32 && c <= 126) {
+            u += String(c);  // only append printable ASCII
+        }
+        else {
+            u += "[?]";      // placeholder or skip
+        }
+        BT.println(u);
     }
     ini = 1;
     if(ck() >= 4){
@@ -139,6 +145,9 @@ void loop(){
                 }
                 break;
             default:
+                while(true){
+                    Writemotor(0, 0);
+                }
                 break;
         }
         unsigned long st = millis();
@@ -151,7 +160,25 @@ void loop(){
         // cnt++;
         // String str = "get : " + String(c);
         // send(str);
+        // BT.println("s");
+        // delay(500);
         BT.println("s");
+        // String u = "car_received...";
+        // if (c >= 32 && c <= 126) {
+        //     u += String(c);  // only append printable ASCII
+        // }
+        // else {
+        //     u += "[?]";      // placeholder or skip
+        // }
+        // cnt++;
+        // if(cnt > 15){
+        //     stop(5000);
+        // }
+        // if(c >= 127){
+        //     stop(5000);
+        // }
+        // Serial.println(u);
+        // BT.println(u);
     }
     if(c == 'b'){
         mid_tracking();
