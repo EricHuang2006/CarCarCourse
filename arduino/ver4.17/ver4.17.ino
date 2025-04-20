@@ -19,6 +19,7 @@ int PWM[] = {12, 13}; // A, B
 int A[] = {2, 3};
 int B[] = {5, 6};
 int RF[] = {30, 32, 34, 36, 38};
+int loop_cnt = 0;
 // RFID, 請按照自己車上的接線寫入腳位
 #define RST_PIN 9                // 讀卡機的重置腳位
 #define SS_PIN 53               // 晶片選擇腳位
@@ -94,6 +95,7 @@ char BT_get(){
 
 int cnt = 0, id = 1, ini = 0;
 char c = 'z';
+char lst = 'z';
 
 void send(String s){
     for(int i = 0; i < s.length(); i++){
@@ -105,6 +107,8 @@ void send(String s){
 }
 
 void loop(){
+    // tracking();
+    // return;
     // if(c == 'b'){
     //     mfrc522.PCD_Init();
     //     checkMFRC();
@@ -154,6 +158,7 @@ void loop(){
         while(millis() - st < 200){
             tracking();
         }
+        lst = c;
         c = 'z';
         while(c == 'z') c = BT_get();
         // char a = char('a' + cnt);
@@ -162,7 +167,7 @@ void loop(){
         // send(str);
         // BT.println("s");
         // delay(500);
-        BT.println("s");
+        BT.println(c);
         // String u = "car_received...";
         // if (c >= 32 && c <= 126) {
         //     u += String(c);  // only append printable ASCII
@@ -180,7 +185,7 @@ void loop(){
         // Serial.println(u);
         // BT.println(u);
     }
-    if(c == 'b'){
+    if(c == 'b' || lst == 'b'){
         mid_tracking();
         mfrc522.PCD_Init();
         checkMFRC();

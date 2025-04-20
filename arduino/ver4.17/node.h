@@ -33,28 +33,60 @@ void Writemotor(double a, double b){
 }
 
 double arr[] = {-40, -20, 0, 20, 40};
+int rd[5] = {};
 
-void tracking(bool flag = false){ // PID Control
-  static double kd = 0, lastError = 0, ki = 0, sumError = 0;
-  if(flag) lastError = 0, sumError = 0;
+void tracking(bool flag = false){
   double error = 0;
-  for(int i = 0; i < 5; i++) error += arr[i] * digitalRead(RF[i]);
-  sumError += error; // I
-  sumError = constrain(sumError, -20, 20); // max speed : [-200, 200]
-  double dError = error - lastError; // D
+  for(int i = 0; i < 5; i++) if((rd[i] = digitalRead(RF[i]))) error += arr[i];
+  // int m0 = rd[2], l2 = rd[0], l1 = rd[1], r1 = rd[3], r2 = rd[4];
+  // if(m0 and l2+l1+r1+r2==0){
+  //     Writemotor(248,255);
+  //   }else if(m0+r1==2 and r2+l1+l2==0){
+  //     Writemotor(215,180);
+  //   }else if(m0+l1==2 and l2+r1+r2==0){
+  //     Writemotor(176,220);
+  //   }else if(r1 and r2+m0+l1+l2==0){
+  //     Writemotor(195,150);
+  //   }else if(l1 and l2+m0+r1+r2==0){
+  //     Writemotor(147,200);
+  //   }else if(r1+r2==2 and m0+l1+l2==0){
+  //     Writemotor(195,120);
+  //   }else if(l1+l2==2 and m0+r1+r2==0){
+  //     Writemotor(118,200);
+  //   }else if(r2==1 and r1+m0+l1+l2==0){
+  //     Writemotor(195,80);
+  //   }else if(l2==1 and l1+m0+r1+r2==0){
+  //     Writemotor(79,200);
+  //   }else if(l2+l1+m0+r1+r2==0){
+  //     // Writemotor(-195,-200);
+  //     Writemotor(248,255);
+  //   }else{
+  //     Writemotor(0,0);
+  //   }
+  
+  // return;
+  // if(rd[0]){
+  //   Writemotor(80, 150);
+  //   return;
+  // }
+  // if(rd[4]){
+  //   Writemotor(145, 85);
+  //   return;
+  // }
   
   int kp = 1, tp = 150; // old : 37 // new kp : 170
   // int kp = 22, tp = 90;
-  int powerCorrection = kp * error + kd * dError + ki * sumError;
-  lastError = error;
-  int vr = (tp - powerCorrection) * (powerCorrection >= 0 ? 1 : 1);
-  int vl = 0.95 * (tp + powerCorrection) * (powerCorrection <= 0 ? 1 : 1);
+  //int powerCorrection = kp * error + kd * dError + ki * sumError;
+  //lastError = error;
+  int vr = (tp - error);
+  int vl = 0.95 * (tp + error);
+  
   // int vl = 0.95 * (tp + powerCorrection) * (powerCorrection <= 0 ? 1 : 0.75);
   // int vr = (tp - powerCorrection) * (powerCorrection >= 0 ? 1 : 0.75);
   // int deduct = digitalRead(RF[0]) | digitalRead(RF[4]);
   // if(deduct) vl *= 0.85, vr *= 0.85;
-  vl = min(vl, 255), vr = min(vr, 255);
-  vl = max(vl, -255), vr = max(vr, -255);
+  //vl = min(vl, 255), vr = min(vr, 255);
+  //vl = max(vl, -255), vr = max(vr, -255);
   Writemotor(vl, vr);
 }
 
@@ -118,7 +150,7 @@ void TurnRight(unsigned long wait_ms = 260){
     Writemotor(110, -60);
   }
   while(!digitalRead(RF[4])){
-    Writemotor(48, -45);
+    Writemotor(55, -45);
   }
   stop(200);
   st = millis();

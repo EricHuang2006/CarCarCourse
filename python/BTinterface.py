@@ -22,7 +22,8 @@ class BTInterface:
             if port == "quit":
                 self.bt.disconnect()
                 quit()
-            port = input("PC bluetooth port name: ")
+            print("Reconnecting to COM11...")
+            port = "COM11"
 
     def start(self):
         print("start.")

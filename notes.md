@@ -1,10 +1,8 @@
 ## test
 
-### test/cross_rest.ino
+## ver4.17
 
-快速版本，不穩
+較慢速版，加入藍芽
 
-### test/stable/stable.ino
-
-慢速(均速 100)版本，可以穩定 (?) 走十字
+- 藍芽改成 Hardware Serial
 

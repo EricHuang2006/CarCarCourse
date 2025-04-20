@@ -5,7 +5,8 @@ int RF[] = {30, 32, 34, 36, 38};
 #include <SoftwareSerial.h>
 #include <MFRC522.h>
 #include <SPI.h>
-SoftwareSerial BT(10, 11); 
+// SoftwareSerial BT(10, 11); 
+#define BT Serial1
 #define RST_PIN 9                // 讀卡機的重置腳位
 #define SS_PIN 53               // 晶片選擇腳位
 MFRC522 mfrc522(SS_PIN, RST_PIN);

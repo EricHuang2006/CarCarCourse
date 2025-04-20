@@ -19,9 +19,9 @@ log = logging.getLogger(__name__)
 
 # TODO : Fill in the following information
 # SERVER_URL = "localhost:3000"
-MAZE_FILE = "data/418.csv"
-TEAM_NAME = "ようこそ。Ave Mujica の世界へ"
-SERVER_URL = "http://140.112.175.18:5000/"
+MAZE_FILE = "data/medium_maze.csv"
+TEAM_NAME = "XiangTsaoXiaoXiang"
+SERVER_URL = "https://scoreboard.ntuee.org"
 BT_PORT = "COM11"  # ← 請填你的藍牙埠，例如 "COM11"
 
 def parse_args():
@@ -56,23 +56,23 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         log.error("Invalid mode")
         sys.exit(1)
     
-    a, b, dir = 5, 6, 1 # a = node_id * 2
-    maze.vis[5], maze.vis[6] = 1, 1
-    maze
+    a, b, dir = 14, 2, 4 # a = node_id * 2
+    maze.vis[13], maze.vis[14] = 1, 1
+
     # Strategy 1 : go to the farthest node first, then repeatly do bfs to the nearest unvisited node
     while True:
-        u, seq, nwdir = maze.BFS(a, dir)
+        #u, seq, nwdir = maze.BFS(a, dir)
+        #tmp = "bbbbb"
+        tmp = "fbfbfbfbfbfbfbfbfbfbfb"
+        #tmp = "rbfblb"
+        u, seq, nwdir = 1, tmp, 1
         if not u:
             break
         print(f"current path : {int((a + 1) / 2)} -> {int((u + 1) / 2)}, {nwdir}")
         print(f"sequence : {seq}")
         for i in seq:
             print(f"send : {i}")
-            # while(true):
-            #    BT.bt.serial_write_string(i)
             BT.bt.serial_write_string(i)
-            #continue
-            receive = "ss"
             while True:  
                 receive = BT.get_UID()
                 if receive:
@@ -81,11 +81,11 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                     if len(s) == 8:
                         print(f"get UID : {s}")
                         # add_score(s)
-                        point.add_UID(s) # last character is '\n'
+                        score, tr = point.add_UID(s)
+                        print(f"< Current score : {point.get_current_score()}, Time remaining : {tr:.1f} >")
                         continue
-                    #elif len(s) == 1:
                     else:
-                        print(f"get command : {s}")
+                        #print(f"[ last state : {s} ]")
                         break
                 
         a, dir = u, nwdir
