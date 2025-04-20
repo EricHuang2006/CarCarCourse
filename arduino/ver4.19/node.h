@@ -16,10 +16,10 @@ int extern RF[];
 
 // TODO: add some function to control your car when encounter a node
 // here are something you can try: left_turn, right_turn... etc.
-int d[5], lst_sum = 0;
+int d[7], lst_sum = 0;
 int ck(){
     int c = 0;
-    for(int i = 0; i < 5; i++) c += (d[i] = digitalRead(RF[i]));
+    for(int i = 0; i < 7; i++) c += (d[i] = digitalRead(RF[i])) * (i < 5);
     lst_sum = c;
     return c;
 }
@@ -44,6 +44,12 @@ double arr[] = {-40, -20, 0, 20, 40};
 
 void tracking(bool flag = false){ // PID Control
   for(int i = 0; i < 5; i++) d[i] = digitalRead(RF[i]);
+  // if(d[5]){ // 最左
+  //   Writemotor(-30, 80);
+  // }
+  // else if(d[6]){ // 最右邊
+  //   Writemotor(76, -30);
+  // }
   // if(d[0] || d[4]){
   //   stop(10000);
   // }
@@ -121,7 +127,7 @@ void mid_tracking(){
 void TurnLeft(unsigned long wait_ms = 270){
   unsigned long st = millis();
   st = millis();
-  while(millis() - st < 75){
+  while(millis() - st < 60){
     Writemotor(55, 60);
   }
   stop(50);
@@ -147,7 +153,7 @@ void TurnLeft(unsigned long wait_ms = 270){
 void TurnRight(unsigned long wait_ms = 270){
   unsigned long st = millis();
   st = millis();
-  while(millis() - st < 100){
+  while(millis() - st < 75){
     Writemotor(65, 70);
   }
   stop(50);
@@ -165,7 +171,7 @@ void TurnRight(unsigned long wait_ms = 270){
   // }
 }
 
-void UTurn(unsigned long wait_ms = 370){
+void UTurn(unsigned long wait_ms = 400){
   unsigned long st = millis();
   stop(100);
   st = millis();
@@ -177,7 +183,7 @@ void UTurn(unsigned long wait_ms = 370){
   }
   stop(300);
   st = millis();
-  while(millis() - st < 500){
+  while(millis() - st < 300){
     transition();
   }
   // st = millis();

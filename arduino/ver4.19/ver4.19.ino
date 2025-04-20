@@ -18,7 +18,7 @@
 int PWM[] = {12, 13}; // A, B
 int A[] = {2, 3};
 int B[] = {5, 6};
-int RF[] = {30, 32, 34, 36, 38};
+int RF[] = {30, 32, 34, 36, 38, 28, 42};
 // RFID, 請按照自己車上的接線寫入腳位
 #define RST_PIN 9                // 讀卡機的重置腳位
 #define SS_PIN 53               // 晶片選擇腳位
@@ -28,7 +28,7 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);  // 建立MFRC522物件
 /*============setup============*/
 void setup() {
     // Serial.begin(9600);
-    BT.begin(9600);
+    BT.begin(9600); 
     SPI.begin();
     mfrc522.PCD_Init();
     for(int i = 0; i < 2; i++) 
@@ -64,7 +64,7 @@ bool checkMFRC(){
     if(!mfrc522.PICC_IsNewCardPresent() || !mfrc522.PICC_ReadCardSerial()) {
         return false;
     } //PICC_IsNewCardPresent()：是否感應到新的卡片?
-    Serial.println(F("*Card Detected:*"));
+    // Serial.println(F("*Card Detected:*"));
     // mfrc522->PICC_DumpDetailsToSerial(&(mfrc522->uid)); //讀出 UID
     String s = "";
     for (byte i = 0; i < mfrc522.uid.size; i++) {
@@ -88,8 +88,8 @@ char BT_get(){
     // return s[sid++];
     if(BT.available()){
         char c = BT.read();
-        Serial.print("get : ");
-        Serial.println(c);
+        // Serial.print("get : ");
+        // Serial.println(c);
         return c;
     }
     return 'z';
@@ -128,10 +128,25 @@ void test1(){
 }
 char lst_command = 'z';
 int turn = 0;
-int fast = 1, got_uid = 0;
+int got_uid = 0;
 int ltime = 0;
+int aa = 0;
 
 void loop(){
+  // while(true){
+  //     mfrc522.PCD_WriteRegister(MFRC522::TModeReg, 0x80);
+  //     mfrc522.PCD_WriteRegister(MFRC522::TPrescalerReg, 0xA9);
+  //     mfrc522.PCD_WriteRegister(MFRC522::TReloadRegH, 0x00);
+  //     mfrc522.PCD_WriteRegister(MFRC522::TReloadRegL, 0x25);
+  //     mfrc522.PCD_WriteRegister(MFRC522::TxASKReg, 0x40);
+  //     mfrc522.PCD_WriteRegister(MFRC522::ModeReg, 0x3D);
+  //     mfrc522.PCD_AntennaOn();
+  //     unsigned long st = millis();
+  //     checkMFRC();
+  //     int u = millis() - st;
+  //     aa = (aa + 1) % 100;
+  //     if(!aa) BT.println("t : " + String(u));
+  // }
   // test1();
   // return;
     // if(c == 'b'){
@@ -173,39 +188,37 @@ void loop(){
                 break;
         }
         lst_command = c;
-        if(lst_command == 'f'){
-          fast ^= 1;
-        }
         c = BT_get();
         while(c == 'z'){
           Writemotor(0, 0);
           c = BT_get();
         } 
-        if(c == 'b' && !fast){
+        if(c == 'b'){
           got_uid = 0;
         }
         BT.println(c);
     }
-    if((c == 'b' || lst_command == 'b') && !fast && !got_uid){
+    if((c == 'b' || lst_command == 'b') && !got_uid){
         // ltime = millis();
         // mid_tracking();
-        slow_tracking();
+        tracking();
         turn = (turn + 1) % 5;
         if(!turn){
           // mfrc522.PCD_Init();
           unsigned long st = millis();
           // mfrc522.PCD_Reset();
-
           mfrc522.PCD_WriteRegister(MFRC522::TModeReg, 0x80);
           mfrc522.PCD_WriteRegister(MFRC522::TPrescalerReg, 0xA9);
-          mfrc522.PCD_WriteRegister(MFRC522::TReloadRegH, 0x03);
-          mfrc522.PCD_WriteRegister(MFRC522::TReloadRegL, 0xE8);
+          mfrc522.PCD_WriteRegister(MFRC522::TReloadRegH, 0x00);
+          mfrc522.PCD_WriteRegister(MFRC522::TReloadRegL, 0x25);
           mfrc522.PCD_WriteRegister(MFRC522::TxASKReg, 0x40);
           mfrc522.PCD_WriteRegister(MFRC522::ModeReg, 0x3D);
           mfrc522.PCD_AntennaOn();
           // int u = millis() - st;
           // BT.println("time : " + String(u));
         }
+        // mfrc522.PCD_WriteRegister(MFRC522::TReloadRegH, 0x00);
+        // mfrc522.PCD_WriteRegister(MFRC522::TReloadRegL, 0x10);
         if(checkMFRC()) got_uid = 1;
         int newtime = millis(), cost = newtime - ltime;
         // BT.println("[ Time : " + String(cost));
