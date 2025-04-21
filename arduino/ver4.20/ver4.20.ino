@@ -128,6 +128,7 @@ void test1(){
 }
 char lst_command = 'z';
 int turn = 0;
+int got_uid = 0;
 int ltime = 0;
 int aa = 0;
 
@@ -206,7 +207,7 @@ void loop(){
           mfrc522.PCD_WriteRegister(MFRC522::TModeReg, 0x80);
           mfrc522.PCD_WriteRegister(MFRC522::TPrescalerReg, 0xA9);
           mfrc522.PCD_WriteRegister(MFRC522::TReloadRegH, 0x00);
-          mfrc522.PCD_WriteRegister(MFRC522::TReloadRegL, 0x25);
+          mfrc522.PCD_WriteRegister(MFRC522::TReloadRegL, 0x10);
           mfrc522.PCD_WriteRegister(MFRC522::TxASKReg, 0x40);
           mfrc522.PCD_WriteRegister(MFRC522::ModeReg, 0x3D);
           mfrc522.PCD_AntennaOn();
@@ -215,7 +216,7 @@ void loop(){
         }
         // mfrc522.PCD_WriteRegister(MFRC522::TReloadRegH, 0x00);
         // mfrc522.PCD_WriteRegister(MFRC522::TReloadRegL, 0x10);
-        checkMFRC();
+        if(checkMFRC()) got_uid = 1;
         int newtime = millis(), cost = newtime - ltime;
         // BT.println("[ Time : " + String(cost));
         ltime = newtime;

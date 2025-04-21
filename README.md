@@ -1,4 +1,4 @@
-# Sample Code for NTU Car Car Course Midterm Project
+# NTU Car Car Course Midterm Project (Wed. Group 7)
 
 ## Installation
 
@@ -20,15 +20,11 @@ cd python
 pip install -r requirements.txt
 ```
 
-## Miscellaneous
-### Test Files
-[能動的十字循跡](test/cross_test/cross_test.ino)
-### Parameters
-| Action |  Speed(left, right) | Duration(ms) |
-|:---:|:---:|:---:|
-| Right / Left Turn | (85, 255) | 650 |
-| U-Turn | (225, -225) | 575 |
-| Forward | (255, 255) | 200 |
+## Versions
+
+[Version 4.17](arduino/ver4.17)：慢速版，出彎速度會放慢
+[Version 4.19](arduino/ver4.19)：正常版，最高速 180
+[Version 4.20](arduino/ver4.20)：快速版，最高速 200，較不穩定
 
 ### 焊接：
 

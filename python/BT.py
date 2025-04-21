@@ -51,6 +51,7 @@ class Bluetooth:
                 return rv
             except UnicodeDecodeError:
                 print("Decode failed, data was invalid")
+                return 'x'
             self.serial.reset_input_buffer()
         return ""
 

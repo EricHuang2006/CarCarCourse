@@ -63,8 +63,9 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
     while True:
         #u, seq, nwdir = maze.BFS(a, dir)
         #tmp = "bbbbb"
-        tmp = "fbfbfbfbfbfbfbfbfbfbfb"
-        #tmp = "rbfblb"
+        #tmp = "fbfbfbfbfbfbfbfbfbfbfb"
+        #tmp = "ffbffb"
+        tmp = "rbfblb"
         u, seq, nwdir = 1, tmp, 1
         if not u:
             break
