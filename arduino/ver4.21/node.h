@@ -42,51 +42,30 @@ void stop(double t = 100){
 }
 double arr[] = {-40, -20, 0, 20, 40};
 
-void slow_tracking();
-int lst_slow = -1000;
 void tracking(bool flag = false){ // PID Control
-  if(millis() - lst_slow < 200){
-    slow_tracking();
-  }
   for(int i = 0; i < 5; i++) d[i] = digitalRead(RF[i]);
-  // if(d[5]){ // 最左
-  //   Writemotor(-30, 80);
-  // }
-  // else if(d[6]){ // 最右邊
-  //   Writemotor(76, -30);
-  // }
   // if(d[0] || d[4]){
-  //   stop(10000);
-  // }
-  if(!(d[0] + d[1] + d[2] + d[3] + d[4])){  
-    // stop(10000);
-    if(d[5]){
-      lst_slow = millis();
-      while(!ck()){
-        Writemotor(-160, -220);
-      }
-      stop(50);
-      // slow_tracking();
-    }
-    else if(d[6]){
-      lst_slow = millis();
-      while(!ck()){
-        Writemotor(-210, -165);
-      }
-      stop(50);
-      // slow_tracking();
-    }
-    else Writemotor(194, 200);
+    //   stop(10000);
+    // }
+    if(!(d[0] + d[1] + d[2] + d[3] + d[4])){  
+      // if(d[5]){ // 最左
+      //   Writemotor(-30, 80);
+      // }
+      // else if(d[6]){ // 最右邊
+      //   Writemotor(76, -30);
+      // }
+      // stop(10000);
+      Writemotor(175, 180);
   }
-  else if(d[2] == 1 && !d[1] && !d[3]){ Writemotor(194, 200); } // (172, 180)
-  else if(d[2] == 1 && d[3] == 1){ Writemotor(155, 135); } 
-  else if(d[2] == 1 && d[1] == 1){  Writemotor(138, 165); }
-  else if(d[4] && !d[3]){ Writemotor(155, 75); }
-  else if(d[4] && d[3]){ Writemotor(155, 85); }
-  else if(d[0] && !d[1]){ Writemotor(76, 165); }
-  else if(d[0] && d[1]){ Writemotor(85, 165); }
-  else if(d[3]){ Writemotor(155, 120); }
-  else if(d[1]){ Writemotor(120, 165); }
+  else if(d[2] == 1 && !d[1] && !d[3]){ Writemotor(175, 180); } // (172, 180)
+  else if(d[2] == 1 && d[3] == 1){ Writemotor(145, 120); }
+  else if(d[2] == 1 && d[1] == 1){  Writemotor(115, 145); }
+  else if(d[4] && !d[3]){ Writemotor(130, 60); }
+  else if(d[4] && d[3]){ Writemotor(130, 70); }
+  else if(d[0] && !d[1]){ Writemotor(65, 130); }
+  else if(d[0] && d[1]){ Writemotor(57, 130); }
+  else if(d[3]){ Writemotor(140, 100); }
+  else if(d[1]){ Writemotor(100, 146); }
   // Writemotor(vl, vr);
 }
 
@@ -111,23 +90,17 @@ void slow_tracking(){
 void slow_tracking(){
   for(int i = 0; i < 5; i++) d[i] = digitalRead(RF[i]);
   if(!(d[0] + d[1] + d[2] + d[3] + d[4])){  
-    if(d[5]){
-      Writemotor(20, 100);
-    }
-    else if(d[6]){
-      Writemotor(100, 20);
-    }
-    else Writemotor(116, 120);
+    Writemotor(116, 120);
   }
   else if(d[2] == 1 && !d[1] && !d[3]){ Writemotor(116, 120); } // (172, 180)
   else if(d[2] == 1 && d[3] == 1){ Writemotor(110, 100); }
-  else if(d[2] == 1 && d[1] == 1){ Writemotor(94, 110); }
+  else if(d[2] == 1 && d[1] == 1){  Writemotor(90, 110); }
   else if(d[4] && !d[3]){ Writemotor(80, 50); }
   else if(d[4] && d[3]){ Writemotor(80, 55); }
-  else if(d[0] && !d[1]){ Writemotor(46, 80); }
-  else if(d[0] && d[1]){ Writemotor(51, 80); }
-  else if(d[3]){ Writemotor(100, 80); }
-  else if(d[1]){ Writemotor(76, 100); }
+  else if(d[0] && !d[1]){ Writemotor(41, 80); }
+  else if(d[0] && d[1]){ Writemotor(44, 80); }
+  else if(d[3]){ Writemotor(100, 85); }
+  else if(d[1]){ Writemotor(78, 100); }
 }
 
 double slow_arr[] = {-20, -10, 0, 10, 20};
@@ -151,58 +124,51 @@ void mid_tracking(){
   vl = max(vl, -255), vr = max(vr, -255);
   Writemotor(vl, vr);
 }
-void TurnLeft(unsigned long wait_ms = 240){
+void TurnLeft(unsigned long wait_ms = 270){
   unsigned long st = millis();
   st = millis();
   while(millis() - st < 60){
-    Writemotor(20, 50);
+    Writemotor(55, 60);
   }
   stop(50);
   st = millis();
   while(millis() - st < wait_ms){
-    Writemotor(-90, 100);
+    Writemotor(-40, 130);
   }
   while(!digitalRead(RF[0])){
-    Writemotor(-60, 70);
+    Writemotor(-30, 50);
   }
+  stop(200);
   // st = millis();
-  // while(millis() - st < 50){
-  //   Writemotor(-52, 60);
+  // while(millis() - st < 300){
+  //   slow_tracking();
   // }
-  // for(int i = 0; i < 10; i++){
-  //   Writemotor(-45, 70);
+  // st = millis();
+  // while(millis() - st < 300){
+  //   slow_tracking();
   // }
-  stop(100);
-  st = millis();
-  while(millis() - st < 100){
-    slow_tracking();
-  }
 }
 
 
-void TurnRight(unsigned long wait_ms = 240){
+void TurnRight(unsigned long wait_ms = 270){
   unsigned long st = millis();
   st = millis();
-  while(millis() - st < 70){
-    Writemotor(50, 20);
+  while(millis() - st < 75){
+    Writemotor(65, 70);
   }
   stop(50);
   st = millis();
   while(millis() - st < wait_ms){
-    Writemotor(102, -100);
+    Writemotor(130, -55);
   }
   while(!digitalRead(RF[4])){
-    Writemotor(75, -65);
+    Writemotor(55, -45);
   }
+  stop(200);
   // st = millis();
-  // while(millis() - st < 50){
-  //   Writemotor(50, -43);
+  // while(millis() - st < 300){
+  //   slow_tracking();
   // }
-  stop(100);
-  st = millis();
-  while(millis() - st < 100){
-    slow_tracking();
-  }
 }
 
 void UTurn(unsigned long wait_ms = 400){
@@ -216,12 +182,10 @@ void UTurn(unsigned long wait_ms = 400){
     Writemotor(-60, 25);
   }
   stop(300);
-  // st = millis();
-  // while(millis() - st < 250){
-  //   slow_tracking();
-  //   transition();
-  // }
-  
+  st = millis();
+  while(millis() - st < 300){
+    transition();
+  }
   // st = millis();
   // while(millis() - st < 300){
   //   slow_tracking();
@@ -229,30 +193,22 @@ void UTurn(unsigned long wait_ms = 400){
 }
 
 void Forward(){
-  while(ck() == 5){
-    if(d[5] && d[6]){
-      Writemotor(184, 190);
-    }
-    if(!d[5]){
-      Writemotor(180, 140);
-    }
-    else if(!d[6]){
-      Writemotor(130, 180);
-    }
-    else Writemotor(184, 190);
+  unsigned long st = millis();
+  while(millis() - st < 150){
+    Writemotor(175, 180);
   }
-  if(!ck()){
-    stop(30);
-    unsigned long st = millis();
-    BT.println("read 0, rotate...");
-    while(!d[4] && millis() - st < 400){
-      Writemotor(50, -50);
-      ck();
+  // while(ck() == 5){
+  //   Writemotor(175, 180);
+  // }
+  stop(100);
+  while(!digitalRead(RF[2])){
+    for(int i=0;i<7;i++){ d[i] = digitalRead(RF[i]);}
+    if(d[0]+d[1]+d[5] > d[3]+d[4]+d[6]){
+      Writemotor(-25,25);
     }
-    if(!lst_sum){
-      while(!ck()){
-        Writemotor(-50, 50);
-      }
+    else{
+      Writemotor(25,-25);
     }
   }
+  stop(100);
 }

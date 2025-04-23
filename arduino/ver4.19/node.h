@@ -55,7 +55,7 @@ void tracking(bool flag = false){ // PID Control
   // }
   if(!(d[0] + d[1] + d[2] + d[3] + d[4])){  
     // stop(10000);
-    Writemotor(175, 180);
+    Writemotor(-175, -180);
   }
   else if(d[2] == 1 && !d[1] && !d[3]){ Writemotor(175, 180); } // (172, 180)
   else if(d[2] == 1 && d[3] == 1){ Writemotor(145, 120); }
