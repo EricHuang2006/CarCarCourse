@@ -139,6 +139,16 @@ void TurnLeft(unsigned long wait_ms = 270){
     Writemotor(-30, 50);
   }
   stop(200);
+  // while(!digitalRead(RF[2])){
+  //   for(int i=0;i<7;i++){ d[i] = digitalRead(RF[i]);}
+  //   if(d[0]+d[1]+d[5] > d[3]+d[4]+d[6]){
+  //     Writemotor(-30,30);
+  //   }
+  //   else{
+  //     Writemotor(30,-30);
+  //   }
+  // }
+  // stop(50);
   // st = millis();
   // while(millis() - st < 300){
   //   slow_tracking();
@@ -165,6 +175,16 @@ void TurnRight(unsigned long wait_ms = 270){
     Writemotor(55, -45);
   }
   stop(200);
+  // while(!digitalRead(RF[2])){
+  //   for(int i=0;i<7;i++){ d[i] = digitalRead(RF[i]);}
+  //   if(d[0]+d[1]+d[5] > d[3]+d[4]+d[6]){
+  //     Writemotor(-30,30);
+  //   }
+  //   else{
+  //     Writemotor(30,-30);
+  //   }
+  // }
+  // stop(50);
   // st = millis();
   // while(millis() - st < 300){
   //   slow_tracking();
@@ -181,11 +201,21 @@ void UTurn(unsigned long wait_ms = 400){
   while(!digitalRead(RF[0])){
     Writemotor(-60, 25);
   }
-  stop(300);
+  stop(150);
   st = millis();
-  while(millis() - st < 300){
+  while(millis() - st < 150){
     transition();
   }
+  // while(!digitalRead(RF[2])){
+  //   for(int i=0;i<7;i++){ d[i] = digitalRead(RF[i]);}
+  //   if(d[0]+d[1]+d[5] > d[3]+d[4]+d[6]){
+  //     Writemotor(-30,30);
+  //   }
+  //   else{
+  //     Writemotor(30,-30);
+  //   }
+  // }
+  // stop(100);
   // st = millis();
   // while(millis() - st < 300){
   //   slow_tracking();
@@ -204,11 +234,18 @@ void Forward(){
   while(!digitalRead(RF[2])){
     for(int i=0;i<7;i++){ d[i] = digitalRead(RF[i]);}
     if(d[0]+d[1]+d[5] > d[3]+d[4]+d[6]){
-      Writemotor(-25,25);
+      Writemotor(-30,30);
     }
     else{
-      Writemotor(25,-25);
+      Writemotor(30,-30);
     }
   }
   stop(100);
 }
+// if(digitalRead(RF[2])){
+//     st = millis();
+//     while(millis() - st < 150){
+//       tracking();
+//     }
+//     return;
+//   }

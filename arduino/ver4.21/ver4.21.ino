@@ -185,26 +185,22 @@ void loop(){
         BT.println(c);
     }
     if(c == 'b' || lst_command == 'b'){
-        // ltime = millis();
-        // mid_tracking();
         tracking();
-        turn = (turn + 1) % 5;
-        if(!turn){
-          // mfrc522.PCD_Init();
-          unsigned long st = millis();
+        // turn = (turn + 1) % 5;
+        // if(!turn){
           // mfrc522.PCD_Reset();
-          mfrc522.PCD_WriteRegister(MFRC522::TModeReg, 0x80);
-          mfrc522.PCD_WriteRegister(MFRC522::TPrescalerReg, 0xA9);
-          mfrc522.PCD_WriteRegister(MFRC522::TReloadRegH, 0x00);
-          mfrc522.PCD_WriteRegister(MFRC522::TReloadRegL, 0x10);
-          mfrc522.PCD_WriteRegister(MFRC522::TxASKReg, 0x40);
-          mfrc522.PCD_WriteRegister(MFRC522::ModeReg, 0x3D);
-          mfrc522.PCD_AntennaOn();
-        }
+        mfrc522.PCD_WriteRegister(MFRC522::TModeReg, 0x80);
+        mfrc522.PCD_WriteRegister(MFRC522::TPrescalerReg, 0xA9);
+        mfrc522.PCD_WriteRegister(MFRC522::TReloadRegH, 0x00);
+        mfrc522.PCD_WriteRegister(MFRC522::TReloadRegL, 0x10);
+        mfrc522.PCD_WriteRegister(MFRC522::TxASKReg, 0x40);
+        mfrc522.PCD_WriteRegister(MFRC522::ModeReg, 0x3D);
+        mfrc522.PCD_AntennaOn();
+        // }
         if(checkMFRC()) got_uid = 1;
-        int newtime = millis(), cost = newtime - ltime;
+        // int newtime = millis(), cost = newtime - ltime;
         // BT.println("[ Time : " + String(cost));
-        ltime = newtime;
+        // ltime = newtime;
     }
     else tracking();
 }

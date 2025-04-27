@@ -60,12 +60,15 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
     # a, b, dir = 14, 2, 4 # a = node_id * 2
     # maze.vis[13], maze.vis[14] = 1, 1
     #----------- 正式賽
-    a, b, dir = 47, 43, 1 # a = node_id * 2
+    a, b, dir = 47, 8, 1 # a = node_id * 2
     maze.vis[47], maze.vis[48] = 1, 1
-    #-----------
-    # a, b, dir = 3, -1, 1
-    # maze.vis[3], maze.vis[4] = 1, 1
     full_seq = ""
+    u, seq, nwdir = maze.BFS(a, dir, b)
+    full_seq = full_seq + ''.join(map(str, seq))
+    a, b, dir = u, 18, nwdir
+    u, seq, nwdir = maze.BFS(a, dir, b)
+    full_seq = full_seq + ''.join(map(str, seq))
+    a, b, dir = u, 43, nwdir
     # Strategy 1 : go to the farthest node first, then repeatly do bfs to the nearest unvisited node
     while True:
         #-------------- 正式賽
@@ -78,9 +81,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         full_seq = full_seq + ''.join(map(str, seq))
         a, dir = u, nwdir
         #--------------
-        #tmp = "fbfbfbfbfbfbfbfbfbfbfb"
         # tmp = "rbfblb"
-        # tmp = "ffrblffb"
         # u, seq, nwdir = 1, tmp, 1 # test
         # print(f"current path : {int((a + 1) / 2)} -> {int((u + 1) / 2)}, {nwdir}")
         # print(f"sequence : {seq}")
@@ -98,7 +99,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
                     score, tr = point.add_UID(s)
                     print(f"< Current score : {point.get_current_score()}, Time remaining : {tr:.1f} >")
                     continue
-                else:
+                else: # 收到回復，傳送下一個指令 
                     break
                 
     BT.bt.serial_write_string("s")

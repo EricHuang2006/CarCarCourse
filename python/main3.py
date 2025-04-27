@@ -43,7 +43,7 @@ def parse_args():
 def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: str):
     maze = Maze(maze_file)
     # point = ScoreboardFake("your team name", "data/fakeUID.csv") # for local testing
-    BT = BTInterface(port=bt_port)
+    # BT = BTInterface(port=bt_port)
     point = ScoreboardServer(team_name, server_url)
     # TODO : Initialize necessary variables
 
@@ -58,8 +58,9 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         sys.exit(1)
     
     #----------- 正式賽
-    a, b, dir = 47, 43, 1 # a = node_id * 2
+    a, b, dir = 47, 8, 1 # a = node_id * 2
     maze.vis[47], maze.vis[48] = 1, 1
+    maze.vis[59], maze.vis[60] = 1, 1
     full_seq = ""
     # Strategy 1 : go to the farthest node first, then repeatly do bfs to the nearest unvisited node
     while True:
@@ -76,6 +77,7 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         a, dir = u, nwdir
         for i in seq:
             print(f"send : {i}")
+            continue
             BT.bt.serial_write_string(i)
             while True:  
                 receive = BT.get_UID()

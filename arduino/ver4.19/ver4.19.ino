@@ -198,10 +198,7 @@ void loop(){
         // ltime = millis();
         // mid_tracking();
         tracking();
-        turn = (turn + 1) % 5;
-        if(!turn){
           // mfrc522.PCD_Init();
-          unsigned long st = millis();
           // mfrc522.PCD_Reset();
           mfrc522.PCD_WriteRegister(MFRC522::TModeReg, 0x80);
           mfrc522.PCD_WriteRegister(MFRC522::TPrescalerReg, 0xA9);
@@ -212,13 +209,12 @@ void loop(){
           mfrc522.PCD_AntennaOn();
           // int u = millis() - st;
           // BT.println("time : " + String(u));
-        }
         // mfrc522.PCD_WriteRegister(MFRC522::TReloadRegH, 0x00);
         // mfrc522.PCD_WriteRegister(MFRC522::TReloadRegL, 0x10);
         checkMFRC();
-        int newtime = millis(), cost = newtime - ltime;
+        // int newtime = millis(), cost = newtime - ltime;
         // BT.println("[ Time : " + String(cost));
-        ltime = newtime;
+        // ltime = newtime;
     }
     else tracking();
 }

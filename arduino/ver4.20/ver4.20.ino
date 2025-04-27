@@ -45,7 +45,7 @@ void setup() {
 #include "RFID.h"
 // #include "bluetooth.h"
 // #include "node_slow.h"
-#include "node.h"
+#include "node_fast.h"
 // #include "track.h" functions are in node.h
 /*=====Import header files=====*/
 

@@ -19,9 +19,9 @@ log = logging.getLogger(__name__)
 
 # TODO : Fill in the following information
 # SERVER_URL = "localhost:3000"
+# MAZE_FILE = "data/big_maze.csv"
 MAZE_FILE = "data/big_maze.csv"
-# MAZE_FILE = "data/maze1.csv"
-TEAM_NAME = "XiangTsaoXiaoXiang7"
+TEAM_NAME = "XiangTsaoXiaoXiang"
 SERVER_URL = "http://140.112.175.18:5000"
 BT_PORT = "COM11"  # ← 請填你的藍牙埠，例如 "COM11"
 
@@ -57,40 +57,48 @@ def main(mode: int, bt_port: str, team_name: str, server_url: str, maze_file: st
         log.error("Invalid mode")
         sys.exit(1)
     
+    # a, b, dir = 14, 2, 4 # a = node_id * 2
+    # maze.vis[13], maze.vis[14] = 1, 1
     #----------- 正式賽
     a, b, dir = 47, 43, 1 # a = node_id * 2
     maze.vis[47], maze.vis[48] = 1, 1
+    #-----------
+    # a, b, dir = 3, -1, 1
+    # maze.vis[3], maze.vis[4] = 1, 1
     full_seq = ""
     # Strategy 1 : go to the farthest node first, then repeatly do bfs to the nearest unvisited node
     while True:
+        #-------------- 正式賽
         u, seq, nwdir = maze.BFS(a, dir, b)
         b = -1
+        print(u)
         if not u:
-            print(f"last : b")
             full_seq = full_seq + 'b'
-            # BT.bt.serial_write_string("b") # 正式賽
             break
         full_seq = full_seq + ''.join(map(str, seq))
-        print(f"current path : {int((a + 1) / 2)} -> {int((u + 1) / 2)}, {nwdir}")
-        print(f"sequence : {seq}")
         a, dir = u, nwdir
-        for i in seq:
-            print(f"send : {i}")
-            BT.bt.serial_write_string(i)
-            while True:  
-                receive = BT.get_UID()
-                if receive:
-                    s = str(receive).strip()
-                    print(f"[ received : {s} ]")
-                    if len(s) == 8:
-                        print(f"get UID : {s}")
-                        score, tr = point.add_UID(s)
-                        print(f"< Current score : {point.get_current_score()}, Time remaining : {tr:.1f} >")
-                        continue
-                    else:
-                        break
+        #--------------
+        # tmp = "rbfblb"
+        # u, seq, nwdir = 1, tmp, 1 # test
+        # print(f"current path : {int((a + 1) / 2)} -> {int((u + 1) / 2)}, {nwdir}")
+        # print(f"sequence : {seq}")
+    print(f"full sequence : {full_seq}")
+    for i in full_seq:
+        print(f"send : {i}")
+        BT.bt.serial_write_string(i)
+        while True:  
+            receive = BT.get_UID()
+            if receive:
+                s = str(receive).strip()
+                print(f"[ received : {s} ]")
+                if len(s) == 8:
+                    print(f"get UID : {s}")
+                    score, tr = point.add_UID(s)
+                    print(f"< Current score : {point.get_current_score()}, Time remaining : {tr:.1f} >")
+                    continue
+                else:
+                    break
                 
-    print(full_seq)
     BT.bt.serial_write_string("s")
     while True: # 正式賽 : True
         receive = BT.get_UID()

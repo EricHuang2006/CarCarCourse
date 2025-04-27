@@ -44,12 +44,12 @@ class Bluetooth:
         waiting = self.serial.in_waiting
         if waiting > 0:
             u = self.serial.readline()
-            print(f"raw info : {u}")
             try:
                 rv = u.decode("utf-8")[:-1]
                 self.serial.reset_input_buffer()
                 return rv
             except UnicodeDecodeError:
+                print(f"raw info : {u}")
                 print("Decode failed, data was invalid")
                 return 'x'
             self.serial.reset_input_buffer()

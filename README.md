@@ -28,6 +28,9 @@ pip install -r requirements.txt
 
 [Version 4.20](arduino/ver4.20)：快速版，最高速 200，較不穩定
 
+[Version 4.21](arduino/ver4.21)：比賽版，會找線
+
+
 ### 焊接：
 
 ![alt text](image.png)
